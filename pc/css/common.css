@@ -1,0 +1,33 @@
+.headerBack{
+    width: 100vw;
+    height: 130px;
+    background-color: #27365f;
+}
+.header {
+    width: 80vw;
+    height: 130px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    
+  }
+  .title{
+      width: 800px;
+      height: 150px;
+      background: url("../asset/logo-text.png") no-repeat;
+      background-size: 100%;
+  }
+  .back{
+      width: 100px;
+      height: 100px;
+      background: url("../asset/back.png") no-repeat;
+      background-size: 100% 100%;
+      cursor: pointer;
+  }
+  .clickEffict:active {
+     transform: scale(0.9);
+     -ms-transform: scale(0.9);
+     -moz-transform: scale(0.9);
+     -webkit-transform: scale(0.9);
+     -o-transform: scale(0.9);
+}

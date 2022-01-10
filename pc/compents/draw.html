@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>图片</title>
+    <link rel="stylesheet" href="../css/common.css" />
+    <link rel="stylesheet" href="../css/default.css" />
+    <!-- 导入样式 -->
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+    <!-- 导入 Vue 3 -->
+    <script src="//unpkg.com/vue@next"></script>
+    <!-- 导入组件库 -->
+    <script src="//unpkg.com/element-plus"></script>
+    <script src="../js/axios.js"></script>
+    <style>
+      .contents {
+        width: 1200px;
+        height: 600px;
+        margin: 2% auto 0;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      .block {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- header -->
+      <div class="headerBack">
+        <div class="header">
+          <div class="title"></div>
+          <div class="back clickEffict" @click="back"></div>
+        </div>
+      </div>
+      <!-- 画册区 -->
+      <div class="contents">
+        <el-image
+          style="width: 220px; height: 280px"
+          v-for="(item,index) in data.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+          :key="index"
+          :src="item"
+          :preview-src-list="data"
+          :initial-index="1"
+        >
+        </el-image>
+      </div>
+      <div class="block">
+        <el-pagination
+          layout="prev, pager, next"
+          :total="data.length"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        >
+        </el-pagination>
+      </div>
+    </div>
+    <script>
+      const App = {
+        data() {
+          return {
+            data: [],
+            currentPage: 1,
+            pagesize: 10,
+          };
+        },
+        methods: {
+          getData() {
+            axios.get("../json/dataImg.json").then((res) => {
+              this.data = res.data.img;
+            });
+          },
+          back() {
+            window.history.back();
+          },
+          handleSizeChange(val) {
+            this.pagesize = val;
+          },
+          handleCurrentChange(val) {
+            this.currentPage = val;
+          },
+        },
+        mounted() {
+            this.getData()
+        },
+      };
+      const app = Vue.createApp(App);
+      app.use(ElementPlus);
+      app.mount("#app");
+    </script>
+  </body>
+</html>
