@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>图片</title>
+    <title></title>
     <link rel="stylesheet" href="../css/common.css" />
     <link rel="stylesheet" href="../css/default.css" />
     <!-- 导入样式 -->
@@ -16,8 +16,8 @@
     <script src="../js/axios.js"></script>
     <style>
       .contents {
-        width: 1200px;
-        height: 600px;
+        width: 1300px;
+        height: 580px;
         margin: 2% auto 0;
         display: flex;
         justify-content: space-between;
@@ -33,46 +33,67 @@
       <!-- header -->
       <div class="headerBack">
         <div class="header">
-          <div class="title"></div>
+          <div class="title">
+            <img :src="titleImageUrl" style="width: 80%" />
+          </div>
           <div class="back clickEffict" @click="back"></div>
         </div>
       </div>
       <!-- 画册区 -->
       <div class="contents">
-        <el-image
-          style="width: 220px; height: 280px"
-          v-for="(item,index) in data.slice((currentPage-1)*pagesize,currentPage*pagesize)"
-          :key="index"
-          :src="item"
-          :preview-src-list="data"
-          :initial-index="1"
+        <div
+          style="width: 320px; height: 280px;"
+          v-for="(item,index) in media.slice((currentPage-1)*pagesize,currentPage*pagesize)" :key="index"
         >
-        </el-image>
+          <a :href="item.url" target='_blank'><img style="width: 320px; height: 260px;" :src="item.url" v-if="item.type === 'image' "/></a>
+          <video
+            v-if="item.type === 'video' "
+            :src="item.url"
+            style="width: 100%;height: 82%;"
+            controls
+          ></video>
+        </div>
       </div>
       <div class="block">
         <el-pagination
           layout="prev, pager, next"
-          :total="data.length"
+          :total="media.length"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         >
         </el-pagination>
       </div>
     </div>
-    <script>
+    <script type="module">
+      import { baseUrl } from "../js/config.js";
+      let lang = sessionStorage.getItem("lang");
       const App = {
         data() {
           return {
-            data: [],
+            media: [],
             currentPage: 1,
-            pagesize: 10,
+            pagesize: 8,
+            title: "",
+            mainTitle: "",
+            subTitle: "",
+            titleImageUrl: "",
           };
+        },
+        created() {
+          this.getData();
         },
         methods: {
           getData() {
-            axios.get("../json/dataImg.json").then((res) => {
-              this.data = res.data.img;
-            });
+            axios
+              .get(baseUrl + "activity.php?action=getPartyContent")
+              .then((res) => {
+                this.title = res.data[lang].title;
+                this.mainTitle = res.data[lang].mainTitle;
+                this.subTitle = res.data[lang].subTitle;
+                this.titleImageUrl = res.data.titleImageUrl;
+                this.media = res.data.media;
+                document.title = this.title;
+              });
           },
           back() {
             window.history.back();
@@ -83,9 +104,6 @@
           handleCurrentChange(val) {
             this.currentPage = val;
           },
-        },
-        mounted() {
-            this.getData()
         },
       };
       const app = Vue.createApp(App);

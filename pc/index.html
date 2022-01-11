@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>魅力汉语行</title>
+    <title  v-cloak></title>
     <link rel="stylesheet" href="./css/default.css" />
     <!-- 导入样式 -->
     <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
@@ -41,6 +41,7 @@
       .header {
         width: 80vw;
         height: 15vh;
+        line-height: 12vh;
         margin: 0 auto;
         display: flex;
         justify-content: space-between;
@@ -48,8 +49,7 @@
       .title {
         width: 900px;
         height: 150px;
-        background: url("./asset/logo-text.png") no-repeat;
-        background-size: 100%;
+       
       }
       .clickEffict:active {
         transform: scale(0.9);
@@ -69,24 +69,45 @@
         margin: 0 auto;
         font-size: 20px;
       }
+      [v-cloak]{
+        display: none;
+      }
     </style>
   </head>
   <body>
-    <div id="app">
+    <div id="app" v-cloak>
       <!-- header -->
       <div class="header">
-        <!-- <div class="title"></div> -->
-        <h2 style="font-size: 40px; color: #ffffff">{{title}}</h2>
+        <div class="title">
+          <img :src="titleImageUrl" style="width: 80%;">
+        </div>
         <div>
           <el-dropdown size="large" @command="handleCommand">
             <el-button type="primary">
-              {{changeLanguage}}
-             &nbsp;
-             <svg t="1641818630955" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2112" width="16" height="16"><path d="M966.4 323.2c-9.6-9.6-25.6-9.6-35.2 0l-416 416-425.6-416c-9.6-9.6-25.6-9.6-35.2 0-9.6 9.6-9.6 25.6 0 35.2l441.6 432c9.6 9.6 25.6 9.6 35.2 0l435.2-432C976 345.6 976 332.8 966.4 323.2z" p-id="2113" fill="#ffffff"></path></svg>
+              {{changeLanguage}} &nbsp;
+              <svg
+                t="1641818630955"
+                class="icon"
+                viewBox="0 0 1024 1024"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                p-id="2112"
+                width="16"
+                height="16"
+              >
+                <path
+                  d="M966.4 323.2c-9.6-9.6-25.6-9.6-35.2 0l-416 416-425.6-416c-9.6-9.6-25.6-9.6-35.2 0-9.6 9.6-9.6 25.6 0 35.2l441.6 432c9.6 9.6 25.6 9.6 35.2 0l435.2-432C976 345.6 976 332.8 966.4 323.2z"
+                  p-id="2113"
+                  fill="#ffffff"
+                ></path>
+              </svg>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item v-for="(item,key) in Data.language" :command="key">
+                <el-dropdown-item
+                  v-for="(item,key) in Data.language"
+                  :command="key"
+                >
                   {{item}}
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -97,8 +118,12 @@
       <!-- 内容区 -->
       <div class="contents">
         <ul class="list">
-          <li v-for="(item,key) in Data.activity">
-            <img class="clickEffict" :src="item.imageUrl" @click="jumpUrl(key)">
+          <li v-for="item in Data.activity">
+            <img
+              class="clickEffict"
+              :src="item.imageUrl"
+              @click="jumpUrl(item.jumpToUrl)"
+            />
           </li>
         </ul>
       </div>
@@ -114,7 +139,7 @@
       </div>
     </div>
     <script type="module">
-      import {baseUrl} from './js/config.js';
+      import { baseUrl } from "./js/config.js";
       const App = {
         data() {
           return {
@@ -122,56 +147,40 @@
             sponsor_china: "",
             sponsor_overseas: "",
             organizer: "",
-            title:"",
-            changeLanguage:""
+            title: "",
+            changeLanguage: "",
+            titleImageUrl:""
           };
         },
         created() {
           this.getData();
-        }, 
+        },
         methods: {
           getData() {
             axios
-              .get(
-                baseUrl + "index.php?action=getIndexContent"
-              )
+              .get(baseUrl + "index.php?action=getIndexContent")
               .then((res) => {
                 this.Data = res.data;
-                this.handleCommand("zh");
+                this.titleImageUrl = res.data.titleImageUrl;
+                let lang = sessionStorage.getItem("lang");
+                if(lang==null){
+                  lang = "zh"
+                }                
+                this.handleCommand(lang);
               });
           },
-          jumpUrl(key){
-            switch (key) {
-              case 0:
-              window.location = "compents/sing.html";
-                break;
-              case 1:
-              window.location = "compents/draw.html";
-                break;
-              case 2:
-              window.location = "compents/speak.html";
-                break;
-            
-              default:
-              window.location = "#";
-                break;
-            }
+          jumpUrl(url) {
+            window.location = url;
           },
-          handleCommand(lang){
-            if(lang=="en"){
-              this.sponsor_china = this.Data.en.sponsor_china;
-              this.sponsor_overseas = this.Data.en.sponsor_overseas;
-              this.organizer = this.Data.en.organizer;
-              this.title = this.Data.en.title;
-              this.changeLanguage = this.Data.language.en;
-            }else if(lang=="zh"){
-              this.sponsor_china = this.Data.zh.sponsor_china;
-              this.sponsor_overseas = this.Data.zh.sponsor_overseas;
-              this.organizer = this.Data.zh.organizer;
-              this.title = this.Data.zh.title;
-              this.changeLanguage = this.Data.language.zh;
-            }
-          }
+          handleCommand(lang) {
+            sessionStorage.setItem("lang", lang);
+            this.sponsor_china = this.Data[lang].sponsor_china;
+            this.sponsor_overseas = this.Data[lang].sponsor_overseas;
+            this.organizer = this.Data[lang].organizer;
+            this.title = this.Data[lang].mainTitle;
+            document.title = this.Data[lang].title;
+            this.changeLanguage = this.Data.language[lang];
+          },
         },
       };
       const app = Vue.createApp(App);

@@ -9,13 +9,10 @@
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
-    
   }
   .title{
       width: 800px;
       height: 150px;
-      background: url("../asset/logo-text.png") no-repeat;
-      background-size: 100%;
   }
   .back{
       width: 100px;
