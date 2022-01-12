@@ -16,8 +16,8 @@
     <script src="../js/axios.js"></script>
     <style>
       .contents {
-        width: 1300px;
-        height: 580px;
+        width: 1400px;
+        height: 600px;
         margin: 2% auto 0;
         display: flex;
         justify-content: space-between;
@@ -25,6 +25,13 @@
       }
       .block {
         text-align: center;
+      }
+      .agree {
+        width: 100%;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        color: #99a2aa;
       }
     </style>
   </head>
@@ -42,16 +49,37 @@
       <!-- 画册区 -->
       <div class="contents">
         <div
-          style="width: 320px; height: 280px;"
-          v-for="(item,index) in media.slice((currentPage-1)*pagesize,currentPage*pagesize)" :key="index"
+          style="width: 340px; height: 280px"
+          v-for="(item,index) in media.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+          :key="index"
         >
-          <a :href="item.url" target='_blank'><img style="width: 320px; height: 260px;" :src="item.url" v-if="item.type === 'image' "/></a>
-          <video
-            v-if="item.type === 'video' "
-            :src="item.url"
-            style="width: 100%;height: 82%;"
-            controls
-          ></video>
+          <a :href="item.url" target="_blank"
+            ><img
+              style="width: 340px; height: 220px"
+              :src="item.url"
+              v-if="item.type === 'image' "
+          /></a>
+          <div>
+            <video
+              v-if="item.type === 'video' "
+              :src="item.url"
+              style="width: 100%; height: 90%"
+              controls
+            ></video>
+          </div>
+          <!-- 点赞 -->
+          <div class="agree">
+            <img
+              :id="item.id"
+              ref="dianzan"
+              style="width: 20px; height: 20px"
+              @click="zan($event)"
+              name='definedNAME' 
+              :src="agree"
+            />
+            &nbsp;
+            <div>{{item.like}}</div>
+          </div>
         </div>
       </div>
       <div class="block">
@@ -73,12 +101,14 @@
             media: [],
             currentPage: 1,
             pagesize: 8,
-            title: "",
             mainTitle: "",
             subTitle: "",
             titleImageUrl: "",
+            agree:
+              "https://s1.hdslb.com/bfs/static/blive/blfe-dynamic-web/static/img/zan.0da89524.svg",
           };
         },
+        computed: {},
         created() {
           this.getData();
         },
@@ -87,13 +117,14 @@
             axios
               .get(baseUrl + "activity.php?action=getPartyContent")
               .then((res) => {
-                this.title = res.data[lang].title;
+                document.title  = res.data[lang].title;
                 this.mainTitle = res.data[lang].mainTitle;
                 this.subTitle = res.data[lang].subTitle;
                 this.titleImageUrl = res.data.titleImageUrl;
                 this.media = res.data.media;
-                document.title = this.title;
+                
               });
+            
           },
           back() {
             window.history.back();
@@ -104,8 +135,23 @@
           handleCurrentChange(val) {
             this.currentPage = val;
           },
+          zan(e) {
+            let url = baseUrl+"media.php";
+            // let data = "action=clickLike&mediaId="+e.srcElement.id;
+            // let data = "action=clickLike&mediaId=21";
+            let data ={
+              action:"clickLike",
+              mediaId:"21"
+            }
+            axios.post(url,data).then(res => {
+              console.log(res);
+              
+            })
+            e.srcElement.src = "https://s1.hdslb.com/bfs/static/blive/blfe-dynamic-web/static/img/zan-hover.ab577109.svg";
+          },
         },
       };
+
       const app = Vue.createApp(App);
       app.use(ElementPlus);
       app.mount("#app");
