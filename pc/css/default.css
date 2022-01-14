@@ -11,4 +11,6 @@ img {
   vertical-align: top;
   border: none;
 }
-
+video:focus{
+  outline: none;
+}

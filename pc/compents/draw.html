@@ -17,7 +17,7 @@
     <style>
       .contents {
         width: 1400px;
-        height: 800px;
+        height: 900px;
         margin: 2% auto 0;
         display: flex;
         justify-content: space-between;
@@ -35,7 +35,15 @@
         justify-content: center;
         color: #99a2aa;
       }
-      [v-cloak]{
+      .itemTitle {
+        width: 100%;
+        height: 25px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+      }
+      [v-cloak] {
         display: none;
       }
     </style>
@@ -54,10 +62,11 @@
       <!-- 画册区 -->
       <div class="contents">
         <div
-          style="width: 340px; height: 250px;"
+          style="width: 340px; height: 300px"
           v-for="(item,index,id) in media"
           :key="id"
         >
+          <div class="itemTitle" :title="item.title">{{item.title}}</div>
           <a :href="item.url" target="_blank"
             ><img
               style="width: 340px; height: 192px"
@@ -76,12 +85,12 @@
           <div class="agree">
             <img
               :id="item.id"
-              style="width: 20px; height: 20px"
+              style="width: 20px; height: 20px; cursor: pointer;"
               @click="zan($event)"
               :src="item.clickSrc"
             />
             &nbsp;
-            <div :id="item.clickId" >{{item.like}}</div>
+            <div :id="item.clickId">{{item.likeNum}}</div>
           </div>
         </div>
       </div>
@@ -89,7 +98,7 @@
         <el-pagination
           layout="prev, pager, next"
           :total="totalCount"
-          @size-change="handleSizeChange"
+          
           @current-change="handleCurrentChange"
         >
         </el-pagination>
@@ -104,85 +113,92 @@
             media: [],
             currentPage: 1,
             pageSize: 12,
-            totalCount:1,
+            totalCount: 1,
             mainTitle: "",
             subTitle: "",
-            titleImageUrl: ""
+            titleImageUrl: "",
           };
         },
-        
+
         created() {
-          this.getData(this.PageSize,this.currentPage);
+          this.getData();
         },
         methods: {
-          getData(n1,n2) {
-            let url = baseUrl + "activity.php?action=getPartyContent&pageSize="+n1+"&currentPage="+n2;
+          getData(n1, n2) {
+            let url =
+              baseUrl +
+              "activity.php?action=getPartyContent&pageSize=" +
+              n1 +
+              "&currentPage=" +
+              n2;
             axios.get(url).then((res) => {
-                console.log(res.data);
-                this.totalCount = res.data.media.length
-                document.title  = res.data[lang].title;
-                this.mainTitle = res.data[lang].mainTitle;
-                this.subTitle = res.data[lang].subTitle;
-                this.titleImageUrl = res.data.titleImageUrl;
-                let media = res.data.media;
-                let now = new Date();
-                let today = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate();
-                
-                for(let i=0;i<media.length;i++){
-                    let date = localStorage.getItem("media_"+media[i].id);                    
-                    if(date&&date==today){
-                      media[i].clickSrc = "../img/zanClicked.svg";
-                    }else{
-                      media[i].clickSrc = "../img/zan.svg";
-                    }
-                    media[i].clickId = "click_"+media[i].id;
+              console.log(res.data);
+              this.totalCount = res.data.mediaTotalCount;
+              document.title = res.data[lang].title;
+              this.mainTitle = res.data[lang].mainTitle;
+              this.subTitle = res.data[lang].subTitle;
+              this.titleImageUrl = res.data.titleImageUrl;
+              let media = res.data.media;
+              let now = new Date();
+              let today =
+                now.getFullYear() +
+                "-" +
+                (now.getMonth() + 1) +
+                "-" +
+                now.getDate();
+
+              for (let i = 0; i < media.length; i++) {
+                let date = localStorage.getItem("media_" + media[i].id);
+                if (date && date == today) {
+                  media[i].clickSrc = "../img/zanClicked.svg";
+                } else {
+                  media[i].clickSrc = "../img/zan.svg";
                 }
-                this.media = media;
-                console.log(this.media);
-              });
-            
+                media[i].clickId = "click_" + media[i].id;
+              }
+              this.media = media;
+            });
           },
           back() {
             window.history.back();
           },
-          handleSizeChange(val) {
-            this.pageSize = val;
-            // 点击每页显示的条数时，显示第一页
-            this.getData(val,1)  
-             // 注意：在改变每页显示的条数时，要将页码显示到第一页
-             this.currentPage=1  
-          },
           handleCurrentChange(val) {
             this.currentPage = val;
-            this.getData(this.pageSize,val)
-            console.log(val);
+            this.getData(this.pageSize, val);
           },
           zan(e) {
-            let url = baseUrl+"media.php";            
-            let data ={
-              action:"clickLike",
-              mediaId:e.srcElement.id
-            }
-            console.log(this.media);
-            axios.post(url,data).then(res => {
+            let url = baseUrl + "media.php";
+            let data = {
+              action: "clickLike",
+              mediaId: e.srcElement.id,
+            };
+            axios.post(url, data).then((res) => {
               let now = new Date();
-              let today = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate();
-              localStorage.setItem("media_"+e.srcElement.id,today);
-              document.querySelector("#click_"+e.srcElement.id).innerHTML = res.data.likeNum;
+              let today =
+                now.getFullYear() +
+                "-" +
+                (now.getMonth() + 1) +
+                "-" +
+                now.getDate();
+              localStorage.setItem("media_" + e.srcElement.id, today);
+              document.querySelector("#click_" + e.srcElement.id).innerHTML =
+                res.data.likeNum;
+
               let media = this.media;
-              for(let i=0;i<media.length;i++){
-                    let date = localStorage.getItem("media_"+media[i].id);                    
-                    if(date&&date==today){
-                      media[i].clickSrc = "../img/zanClicked.svg";
-                    }else{
-                      media[i].clickSrc = "../img/zan.svg";
-                    }
-                    media[i].clickId = "click_"+media[i].id;
-                    if(e.srcElement.id==media[i].id){
-                      media[i].likeNum = res.data.likeNum;
-                    }
+              for (let i = 0; i < media.length; i++) {
+                let date = localStorage.getItem("media_" + media[i].id);
+                if (date && date == today) {
+                  media[i].clickSrc = "../img/zanClicked.svg";
+                } else {
+                  media[i].clickSrc = "../img/zan.svg";
                 }
-            })
+                media[i].clickId = "click_" + media[i].id;
+                if (e.srcElement.id == media[i].id) {
+                  media[i].likeNum = res.data.likeNum;
+                }
+              }
+              this.media = media;
+            });
             e.srcElement.src = "../img/zanClicked.svg";
           },
         },

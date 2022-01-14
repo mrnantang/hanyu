@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>视频</title>
+    <title></title>
     <link rel="stylesheet" href="../css/common.css" />
     <link rel="stylesheet" href="../css/default.css" />
     <script src="//unpkg.com/vue@next"></script>
@@ -34,6 +34,7 @@
      height: 420px;
      font-size: 20px;
     }
+   
     [v-cloak]{
         display: none;
       }
@@ -58,7 +59,7 @@
           <div class="video" v-for="item in video">
               <span class="videoTitle">{{item.title}} </span>
               <br>
-              <video :src="item.url" style="width: 100%;margin-top: 2%;" controls></video>
+              <video :src="item.url" style="width: 100%;margin-top: 2%;;" controls></video>
           </div>
       </div>
     </div>
