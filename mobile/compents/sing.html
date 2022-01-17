@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <link rel="stylesheet" href="../css/default.css" />
+    <link rel="stylesheet" href="../css/common.css">
+    <script src="//unpkg.com/vue@next"></script>
+    <script src="../js/axios.js"></script>
+    <style>
+        .instruction{
+     font-size: 20px;
+    }
+    .video{
+        text-align: center;
+    }
+    .videoTitle{
+      font-size: 32px;
+    }
+      [v-cloak] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" v-clock>
+      <!-- header -->
+      <div class="headerBack">
+        <div class="header">
+          <div class="back clickEffict" @click="back">
+            <svg t="1642405136125" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3581" width="32" height="32"><path d="M624.788992 204.047974 585.205965 164.464026 219.560038 530.185011 585.205965 895.864013 624.788992 856.280986 298.663014 530.16105Z" p-id="3582" fill="#cdcdcd"></path></svg>
+          </div>
+          <div class="title">
+            <!-- <img :src="titleImageUrl" style="width: 80%" /> -->
+            <img src="../img/chang-title.png" style="width: 90%"/>
+          </div>
+        </div>
+      </div>
+      <!-- 内容区 -->
+      <div>
+        <div class="instruction">
+            {{mainContent}}
+        </div>
+          <div class="video" v-for="item in video">
+              <span class="videoTitle">{{item.title}} </span>
+              <br>
+              <video :src="item.url" style="width: 100%;margin-top: 2%;;" controls></video>
+          </div>
+      </div>
+    </div>
+    <script type="module">
+      import { baseUrl } from "../js/config.js";
+      let lang = sessionStorage.getItem("lang");
+      const app = {
+        data() {
+          return {
+            video: "",
+            titleImageUrl: "",
+            mainContent: "",
+          };
+        },
+        created() {
+          this.getData();
+        },
+        methods: {
+          getData() {
+            axios
+              .get(baseUrl + "activity.php?action=getVideoContent")
+              .then((res) => {
+                this.video = res.data.video;
+                document.title = res.data[lang].title;
+                this.titleImageUrl = res.data.titleImageUrl;
+                this.mainContent = res.data.mainContent;
+              });
+          },
+          back() {
+            window.history.back();
+          },
+        },
+      };
+      Vue.createApp(app).mount("#app");
+    </script>
+  </body>
+</html>
