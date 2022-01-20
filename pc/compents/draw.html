@@ -16,7 +16,7 @@
     <script src="../js/axios.js"></script>
     <style>
       .contents {
-        width: 1400px;
+        width: 1280px;
         height: 900px;
         margin: 2% auto 0;
         display: flex;
@@ -38,6 +38,7 @@
       .itemTitle {
         width: 100%;
         height: 25px;
+        font-size: 15px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -54,22 +55,22 @@
       <div class="headerBack">
         <div class="header">
           <div class="title">
-            <img :src="titleImageUrl" style="width: 80%" />
+            <img :src="titleImageUrl"/>
           </div>
-          <div class="back clickEffict" @click="back"></div>
+          
         </div>
       </div>
       <!-- 画册区 -->
       <div class="contents">
         <div
-          style="width: 340px; height: 300px"
+          style="width: 300px; height: 300px"
           v-for="(item,index,id) in media"
           :key="id"
         >
           <div class="itemTitle" :title="item.title">{{item.title}}</div>
           <a :href="item.url" target="_blank"
             ><img
-              style="width: 340px; height: 192px"
+              style="width: 300px; height: 172px"
               :src="item.url"
               v-if="item.type === 'image' "
           /></a>
@@ -105,7 +106,7 @@
       </div>
     </div>
     <script type="module">
-      import { baseUrl } from "../js/config.js";
+      import  {baseUrl} from "../js/config.js";
       let lang = sessionStorage.getItem("lang");
       const App = {
         data() {
@@ -132,7 +133,6 @@
               "&currentPage=" +
               n2;
             axios.get(url).then((res) => {
-              console.log(res.data);
               this.totalCount = res.data.mediaTotalCount;
               document.title = res.data[lang].title;
               this.mainTitle = res.data[lang].mainTitle;
@@ -158,9 +158,6 @@
               }
               this.media = media;
             });
-          },
-          back() {
-            window.history.back();
           },
           handleCurrentChange(val) {
             this.currentPage = val;

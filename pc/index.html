@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title  v-cloak></title>
+    <title v-cloak></title>
     <link rel="stylesheet" href="./css/default.css" />
     <!-- 导入样式 -->
     <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
@@ -14,42 +14,56 @@
     <script src="//unpkg.com/element-plus"></script>
     <script src="./js/axios.js"></script>
     <style>
-      #app {
-        width: 100vw;
-        height: 100vh;
-        background: url("asset/background.jpg") no-repeat;
+      /* 台式电脑 */
+        @media screen and (min-width:1440px) {
+          .list {
+        text-align: center;
+        margin-left: 75%;
+        width: 20%;
+        height: 660px;
+      }
+      .button1 {
+        width: 320px;
+        height: 210px;
+        margin: 0 auto;
+        cursor: pointer;
+      }
+      .list > li {
+        margin: 0 auto;
+        width: 320px;
+        cursor: pointer;
+      }
+      .buttonList {
+        width: 80%;
+      }
+      .buttonImg{
+        width: 88%;
+      }
+      .app {
+        position: absolute;
+        z-index: -9;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
         background-size: 100% 100%;
       }
       .contents {
-        width: 80vw;
-        height: 55vh;
-        margin: 2% auto 0;
-      }
-      .list {
         width: 100%;
-        height: 55vh;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        height: 60vh;
       }
-      .list > li {
-        width: 33%;
-        height: 30vh;
-        text-align: center;
-        cursor: pointer;
-      }
+   
       .header {
-        width: 80vw;
+        width: 92%;
         height: 15vh;
         line-height: 12vh;
         margin: 0 auto;
         display: flex;
         justify-content: space-between;
       }
+    
       .title {
         width: 900px;
         height: 150px;
-       
       }
       .clickEffict:active {
         transform: scale(0.9);
@@ -59,31 +73,112 @@
         -o-transform: scale(0.9);
       }
       .footer {
-        width: 100vw;
-        height: 200px;
+        width: 100%;
+        height: 100px;
+        margin-top: 105px;
       }
       .organizer {
-        color: #ffffff;
+        color: #000;
         width: 1000px;
-        height: 200px;
+        height: 100px;
         margin: 0 auto;
-        font-size: 20px;
+        font-size: 17px;
       }
-      [v-cloak]{
+
+     
+      [v-cloak] {
         display: none;
       }
+        }
+        /* 笔记本 */
+        @media screen and (max-width:1380px) {
+          .list {
+        text-align: center;
+        margin-left: 75%;
+        width: 20%;
+        height: 330px;
+      }
+      .button1 {
+        width: 320px;
+        height: 150px;
+        margin: 0 auto;
+        cursor: pointer;
+      }
+      .list > li {
+        margin: 0 auto;
+        width: 320px;
+        cursor: pointer;
+      }
+      .buttonList {
+        width: 55%;
+      }
+      .buttonImg{
+        width: 60%;
+      }
+      .app {
+        position: absolute;
+        z-index: -9;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-size: 100% 100%;
+      }
+      .contents {
+        width: 100%;
+        height: 60vh;
+      }
+   
+      .header {
+        width: 92%;
+        height: 15vh;
+        line-height: 12vh;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+      }
+    
+      .title {
+        width: 700px;
+        height: 100px;
+      }
+      .clickEffict:active {
+        transform: scale(0.9);
+        -ms-transform: scale(0.9);
+        -moz-transform: scale(0.9);
+        -webkit-transform: scale(0.9);
+        -o-transform: scale(0.9);
+      }
+      .footer {
+        width: 100%;
+        height: 60px;
+        margin-top: 70px;
+      }
+      .organizer {
+        color: rgb(0, 0, 0);
+        width: 1000px;
+        height: 60px;
+        margin: 0 auto;
+      }
+
+     
+      [v-cloak] {
+        display: none;
+      }
+        }
     </style>
   </head>
   <body>
     <div id="app" v-cloak>
+      <img class="app" :src="backgroundImageUrl" />
+      <div :style="{background:'url('+ backgroundImageUrl +')'}"></div>
       <!-- header -->
       <div class="header">
         <div class="title">
-          <img :src="titleImageUrl" style="width: 80%;">
+          <img :src="titleImageUrl" style="width: 80%" />
         </div>
         <div>
           <el-dropdown size="large" @command="handleCommand">
-            <el-button type="primary">
+            <el-button type="danger">
               {{changeLanguage}} &nbsp;
               <svg
                 t="1641818630955"
@@ -118,9 +213,16 @@
       <!-- 内容区 -->
       <div class="contents">
         <ul class="list">
+          <div class="button1">
+            <img
+              class="buttonImg clickEffict"
+              :src="button1.imageUrl"
+              @click="jumpUrl(button1.jumpToUrl)"
+            />
+          </div>
           <li v-for="item in Data.activity">
             <img
-              class="clickEffict"
+              class="buttonList clickEffict"
               :src="item.imageUrl"
               @click="jumpUrl(item.jumpToUrl)"
             />
@@ -131,9 +233,7 @@
       <div class="footer">
         <div class="organizer">
           <p>{{sponsor_china}}</p>
-          <br />
           <p>{{sponsor_overseas}}</p>
-          <br />
           <p>{{organizer}}</p>
         </div>
       </div>
@@ -149,7 +249,9 @@
             organizer: "",
             title: "",
             changeLanguage: "",
-            titleImageUrl:""
+            titleImageUrl: "",
+            backgroundImageUrl: "",
+            button1: "",
           };
         },
         created() {
@@ -162,15 +264,17 @@
               .then((res) => {
                 this.Data = res.data;
                 this.titleImageUrl = res.data.titleImageUrl;
+                this.backgroundImageUrl = res.data.backgroundImageUrl;
+                this.button1 = res.data.button;
                 let lang = sessionStorage.getItem("lang");
-                if(lang==null){
-                  lang = "zh"
-                }                
+                if (lang == null) {
+                  lang = "zh";
+                }
                 this.handleCommand(lang);
               });
           },
           jumpUrl(url) {
-            window.location = url;
+            window.open(url);
           },
           handleCommand(lang) {
             sessionStorage.setItem("lang", lang);
