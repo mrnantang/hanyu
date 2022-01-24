@@ -53,12 +53,7 @@
     <div id="app" v-cloak>
       <!-- header -->
       <div class="headerBack">
-        <div class="header">
-          <div class="title">
-            <img :src="titleImageUrl"/>
-          </div>
-          
-        </div>
+        <img src="../asset/网站背景条1.png" style="width: 100%;">
       </div>
       <!-- 画册区 -->
       <div class="contents">
@@ -161,6 +156,8 @@
           },
           handleCurrentChange(val) {
             this.currentPage = val;
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0
             this.getData(this.pageSize, val);
           },
           zan(e) {
