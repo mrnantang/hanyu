@@ -1,0 +1,163 @@
+   /* 台式电脑 */
+    @media screen and (min-width:1440px) {
+      .list {
+        text-align: center;
+        margin-left: 75%;
+        width: 20%;
+        height: 660px;
+      }
+
+      .button1 {
+        width: 320px;
+        height: 210px;
+        margin: 0 auto;
+        cursor: pointer;
+      }
+
+      .list>li {
+        margin: 0 auto;
+        width: 320px;
+        cursor: pointer;
+      }
+
+      .buttonList {
+        width: 80%;
+      }
+
+      .buttonImg {
+        width: 88%;
+      }
+
+      .app {
+        position: absolute;
+        z-index: -9;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-size: 100% 100%;
+      }
+
+      .contents {
+        width: 100%;
+        height: 60vh;
+      }
+
+      .header {
+        width: 85%;
+        height: 15vh;
+        line-height: 12vh;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .title {
+        width: 900px;
+      }
+
+      .clickEffict:active {
+        transform: scale(0.9);
+        -ms-transform: scale(0.9);
+        -moz-transform: scale(0.9);
+        -webkit-transform: scale(0.9);
+        -o-transform: scale(0.9);
+      }
+
+      .footer {
+        width: 100%;
+        margin-top: 105px;
+      }
+
+      .organizer {
+        color: #000;
+        width: 1000px;
+        margin: 0 auto;
+      }
+
+
+      [v-cloak] {
+        display: none;
+      }
+    }
+
+    /* 笔记本 */
+    @media screen and (max-width:1380px) {
+      .list {
+        text-align: center;
+        margin-left: 75%;
+        width: 20%;
+        height: 330px;
+      }
+
+      .button1 {
+        width: 320px;
+        height: 150px;
+        margin: 0 auto;
+        cursor: pointer;
+      }
+
+      .list>li {
+        margin: 0 auto;
+        width: 320px;
+        cursor: pointer;
+      }
+
+      .buttonList {
+        width: 55%;
+      }
+
+      .buttonImg {
+        width: 60%;
+      }
+
+      .app {
+        position: absolute;
+        z-index: -9;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-size: 100% 100%;
+      }
+
+      .contents {
+        width: 100%;
+        height: 60vh;
+      }
+
+      .header {
+        width: 92%;
+        height: 15vh;
+        line-height: 12vh;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .title {
+        width: 700px;
+      }
+
+      .clickEffict:active {
+        transform: scale(0.9);
+        -ms-transform: scale(0.9);
+        -moz-transform: scale(0.9);
+        -webkit-transform: scale(0.9);
+        -o-transform: scale(0.9);
+      }
+
+      .footer {
+        width: 100%;
+        margin-top: 70px;
+      }
+
+      .organizer {
+        color: rgb(0, 0, 0);
+        width: 1000px;
+        margin: 0 auto;
+      }
+
+
+      [v-cloak] {
+        display: none;
+      }
+    }

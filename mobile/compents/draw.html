@@ -15,6 +15,11 @@
     <script src="//unpkg.com/element-plus"></script>
     <script src="../js/axios.js"></script>
     <style>
+      .videoSize{
+        width: 100%;
+        height: 90%;
+        background-color: black;
+      }
       .contents {
         width: 100vw;
         margin: 2% auto 0;
@@ -39,6 +44,10 @@
       .itemTitle {
         margin: 2% 3%;
         font-size: 20px;
+      }
+      .item{
+        /* background-color: pink; */
+        margin-top: 8%;
       }
       [v-cloak] {
         display: none;
@@ -69,13 +78,13 @@
             </svg>
           </div>
           <div class="title">
-            <img src="../img/shuosichuan-title.png" style="width: 90%" />
+            <img src="../img/draw_title.png" style="width: 90%"/>
           </div>
         </div>
       </div>
       <!-- 展示区 -->
       <div class="contents">
-        <div v-for="(item,index,id) in media" :key="id" ref="multipleTable">
+        <div class="item" v-for="(item,index,id) in media" :key="id">
           <div class="itemTitle" :title="item.title">{{item.title}}</div>
           <a :href="item.url" target="_blank"
             ><img
@@ -85,9 +94,9 @@
           /></a>
           <div>
             <video
+              class="videoSize"
               v-if="item.type === 'video' "
               :src="item.url"
-              style="width: 100%; height: 90%"
               controls
             ></video>
           </div>

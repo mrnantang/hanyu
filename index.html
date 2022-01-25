@@ -1,0 +1,33 @@
+<html>
+
+<head>
+    <title></title>
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?3f40707267fd65a8cbdb87e0047a0e6d";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+    <script>
+        function onload() {
+            var ua = window.navigator.userAgent.toLowerCase();
+            if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+                window.location.href = "pc/index.html";
+            }
+            else if (ua.indexOf("iphone") > 0 || ua.indexOf("android") > 0) {
+                window.location.href = "mobile/index.html";
+            }
+        }
+
+    </script>
+</head>
+
+<body onload="onload()">
+
+</body>
+
+</html>

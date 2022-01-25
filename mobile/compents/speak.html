@@ -1,14 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <div>
-        123
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <link rel="stylesheet" href="../css/default.css" />
+    <link rel="stylesheet" href="../css/common.css" />
+    <script src="//unpkg.com/vue@next"></script>
+    <script src="../js/axios.js"></script>
+    <style>
+          .Image {
+        height: 20vh;
+      }
+      [v-cloak] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" v-clock>
+      <!-- header -->
+      <div class="headerBack">
+        <div class="header">
+          <div class="back clickEffict" @click="back">
+            <svg
+              t="1642405136125"
+              class="icon"
+              viewBox="0 0 1024 1024"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              p-id="3581"
+              width="32"
+              height="32"
+            >
+              <path
+                d="M624.788992 204.047974 585.205965 164.464026 219.560038 530.185011 585.205965 895.864013 624.788992 856.280986 298.663014 530.16105Z"
+                p-id="3582"
+                fill="#cdcdcd"
+              ></path>
+            </svg>
+          </div>
+          <div class="title">
+            <img src="../img/speak_title.png" style="width: 90%" />
+          </div>
+        </div>
+      </div>
+        <!-- 内容区 -->
+        <div class="contents">
+            <div class="Image">
+              <img style="width: 100%" :src="mainImage"/>
+            </div>
+           <div v-html="mainContent" style="font-size: 20px;">
+           </div>
+          </div>
     </div>
-</body>
+    <script type="module">
+      import { baseUrl } from "../js/config.js";
+      let lang = sessionStorage.getItem("lang");
+      const app = {
+        data() {
+          return {
+            mainImage: "",
+            mainContent: "",
+            titleImageUrl: "",
+            title: ""
+          };
+        },
+        created() {
+            this.getData();
+        },
+        methods: {
+          getData() {
+            axios.get(baseUrl + "activity.php?action=getDrawContent").then((res) => {
+                this.mainImage = res.data.mainImage;
+                this.mainContent = res.data.mainContent;
+                this.titleImageUrl = res.data.titleImageUrl;
+                document.title = res.data[lang].title;
+              });
+          },
+          back() {
+            window.history.back();
+          },
+        },
+      };
+      Vue.createApp(app).mount("#app");
+    </script>
+  </body>
 </html>
