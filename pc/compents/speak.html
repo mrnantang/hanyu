@@ -5,73 +5,220 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
-    <link rel="stylesheet" href="../css/common.css" />
     <link rel="stylesheet" href="../css/default.css" />
     <!-- 导入样式 -->
-    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+    <link rel="stylesheet" href="../css/element.css" />
     <!-- 导入 Vue 3 -->
     <script src="//unpkg.com/vue@next"></script>
     <!-- 导入组件库 -->
-    <script src="//unpkg.com/element-plus"></script>
+    <script src="../js/elementUI.js"></script>
     <script src="../js/axios.js"></script>
     <style>
       .contents {
-        width: 1200px;
-        height: 810px;
+        width: 1280px;
+        height: 900px;
         margin: 2% auto 0;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
       }
-      .Image {
-        width: 1000px;
-        height: 300px;
-        margin: 0 auto;
+      .block {
+        height: 80px;
+        text-align: center;
+      }
+      .agree {
+        width: 100%;
+        margin-top: 3%;
+        height: 20px;
+        display: flex;
+        justify-content: center;
+        color: #99a2aa;
+      }
+      .itemTitle {
+        width: 100%;
+        height: 25px;
+        font-size: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+      }
+      .videoFather{
+        position: relative;
+        height: 170px;
+        overflow: hidden;
+      }
+      .iconfont{
+        position: absolute;
+        margin-top: 50px;
+        margin-left: 120px;
+        z-index: 9;
+      }
+      [v-cloak] {
+        display: none;
       }
     </style>
   </head>
   <body>
-    <div id="app">
+    <div id="app" v-cloak>
       <!-- header -->
       <div class="headerBack">
-        <img src="../asset/网站背景条2.png" style="width: 100%;">
+        <img :src="titleImageUrl" style="width: 100%;">
       </div>
-      <!-- 内容区 -->
+      <!-- 画册区 -->
       <div class="contents">
-        <div class="Image">
-          <img style="width: 100%" :src="mainImage"/>
-        </div>
-       <div v-html="mainContent" style="font-size: 20px;">
+        <div
+          style="width: 300px; height: 235px;overflow: hidden;"
+          v-for="(item,index,id) in media"
+          :key="id"
+        >
+          <div class="itemTitle" :title="item.title">{{item.title}}</div>
+          <a :href="item.url" target="_blank"
+            ><img
+              style="width: 300px;height: 170px;overflow: hidden;"
+              :src="item.url"
+              v-if="item.type === 'image' "
+          /></a>
+          <div v-if="item.type === 'video' ">
+            <a :href="item.url" target="_blank">
+            <div class="iconfont">
+              <svg t="1643185229733"  viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2212" width="64" height="64"><path d="M128 138.666667c0-47.232 33.322667-66.666667 74.176-43.562667l663.146667 374.954667c40.96 23.168 40.853333 60.8 0 83.882666L202.176 928.896C161.216 952.064 128 932.565333 128 885.333333v-746.666666z" fill="#3D3D3D" p-id="2213"></path></svg>
+            </div>
            
-       </div>
+              <video
+              :src="item.url"
+              style="width: 100%;"
+              @click="test"
+              class="videoFather"
+            >
+           
+             </video>
+            </a>
+          </div>
+          <!-- 点赞 -->
+          <div class="agree">
+            <img
+              :id="item.id"
+              style="width: 20px; height: 20px; cursor: pointer;"
+              @click="zan($event)"
+              :src="item.clickSrc"
+            />
+            &nbsp;
+            <div :id="item.clickId">{{item.likeNum}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="block">
+        <el-pagination
+          layout="prev, pager, next"
+          :total="totalCount"
+          
+          @current-change="handleCurrentChange"
+        >
+        </el-pagination>
       </div>
     </div>
     <script type="module">
-      import { baseUrl } from "../js/config.js";
+      import  {baseUrl} from "../js/config.js";
       let lang = sessionStorage.getItem("lang");
       const App = {
         data() {
           return {
-            mainImage: "",
-            mainContent: "",
+            media: [],
+            currentPage: 1,
+            pageSize: 12,
+            totalCount: 1,
+            mainTitle: "",
+            subTitle: "",
             titleImageUrl: "",
-            
           };
         },
-        methods: {
-          getData() {
-            axios
-              .get(baseUrl + "activity.php?action=getDrawContent")
-              .then((res) => {
-                this.mainImage = res.data.mainImage;
-                this.mainContent = res.data.mainContent;
-                this.titleImageUrl = res.data.titleImageUrl;
-                document.title  = res.data[lang].title;
-                
-              });
-          }
-        },
+
         created() {
           this.getData();
         },
+        methods: {
+          getData(n1, n2) {
+            let url =
+              baseUrl +
+              "activity.php?action=getPartyContent&pageSize=" +
+              n1 +
+              "&currentPage=" +
+              n2;
+            axios.get(url).then((res) => {
+              this.totalCount = res.data.mediaTotalCount;
+              document.title = res.data[lang].title;
+              this.mainTitle = res.data[lang].mainTitle;
+              this.subTitle = res.data[lang].subTitle;
+              this.titleImageUrl = res.data.pc.titleImageUrl;
+              let media = res.data.media;
+              let now = new Date();
+              let today =
+                now.getFullYear() +
+                "-" +
+                (now.getMonth() + 1) +
+                "-" +
+                now.getDate();
+
+              for (let i = 0; i < media.length; i++) {
+                let date = localStorage.getItem("media_" + media[i].id);
+                if (date && date == today) {
+                  media[i].clickSrc = "../img/zanClicked.svg";
+                } else {
+                  media[i].clickSrc = "../img/zan.svg";
+                }
+                media[i].clickId = "click_" + media[i].id;
+              }
+              this.media = media;
+            });
+          },
+          handleCurrentChange(val) {
+            this.currentPage = val;
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0
+            this.getData(this.pageSize, val);
+          },
+          zan(e) {
+            let url = baseUrl + "media.php";
+            let data = {
+              action: "clickLike",
+              mediaId: e.srcElement.id,
+            };
+            axios.post(url, data).then((res) => {
+              let now = new Date();
+              let today =
+                now.getFullYear() +
+                "-" +
+                (now.getMonth() + 1) +
+                "-" +
+                now.getDate();
+              localStorage.setItem("media_" + e.srcElement.id, today);
+              document.querySelector("#click_" + e.srcElement.id).innerHTML =
+                res.data.likeNum;
+
+              let media = this.media;
+              for (let i = 0; i < media.length; i++) {
+                let date = localStorage.getItem("media_" + media[i].id);
+                if (date && date == today) {
+                  media[i].clickSrc = "../img/zanClicked.svg";
+                } else {
+                  media[i].clickSrc = "../img/zan.svg";
+                }
+                media[i].clickId = "click_" + media[i].id;
+                if (e.srcElement.id == media[i].id) {
+                  media[i].likeNum = res.data.likeNum;
+                }
+              }
+              this.media = media;
+            });
+            e.srcElement.src = "../img/zanClicked.svg";
+          },
+          test(){
+            console.log("123");
+          }
+        },
       };
+
       const app = Vue.createApp(App);
       app.use(ElementPlus);
       app.mount("#app");

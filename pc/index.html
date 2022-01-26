@@ -48,7 +48,7 @@
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item v-for="(item,key) in Data.language" :command="key">
+              <el-dropdown-item v-for="(item,key) in language" :command="key">
                 {{item}}
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -62,7 +62,7 @@
         <div class="button1">
           <img class="buttonImg clickEffict" :src="button1.imageUrl" @click="jumpUrl(button1.jumpToUrl)" />
         </div>
-        <li v-for="item in Data.activity">
+        <li v-for="item in DataPc.activity">
           <img class="buttonList clickEffict" :src="item.imageUrl" @click="jumpUrl(item.jumpToUrl)" />
         </li>
       </ul>
@@ -81,7 +81,9 @@
     const App = {
       data() {
         return {
-          Data: "",
+          Data:'',
+          DataPc: "",
+          language:'',
           sponsor_china: "",
           sponsor_overseas: "",
           organizer: "",
@@ -100,10 +102,12 @@
           axios
             .get(baseUrl + "index.php?action=getIndexContent")
             .then((res) => {
+              this.language = res.data.language
+              this.DataPc = res.data.pc;
+              this.titleImageUrl = res.data.pc.titleImageUrl;
+              this.backgroundImageUrl = res.data.pc.backgroundImageUrl;
+              this.button1 = res.data.pc.button;
               this.Data = res.data;
-              this.titleImageUrl = res.data.titleImageUrl;
-              this.backgroundImageUrl = res.data.backgroundImageUrl;
-              this.button1 = res.data.button;
               let lang = sessionStorage.getItem("lang");
               if (lang == null) {
                 lang = "zh";
@@ -121,7 +125,7 @@
           this.organizer = this.Data[lang].organizer;
           this.title = this.Data[lang].mainTitle;
           document.title = this.Data[lang].title;
-          this.changeLanguage = this.Data.language[lang];
+          this.changeLanguage = this.language[lang];
         },
       },
     };

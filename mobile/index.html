@@ -25,8 +25,8 @@
     <style>
       #app {
         width: 100vw;
-        height: 105vh;
-        background: url("asset/m-bg1.jpg") no-repeat;
+        height: 115vh;
+        background: url("asset/m-bg1.png") no-repeat;
         background-size: 100% 100%;
       }
       .header {
@@ -127,7 +127,7 @@
               @click="jumpUrl(button1.jumpToUrl)"
             />
           </div>
-          <li v-for="item in Data.activity">
+          <li v-for="item in DataMb.activity">
             <img
               class="clickEffict clickimg"
               :src="item.imageUrl"
@@ -150,8 +150,10 @@
       const App = {
         data() {
           return {
-            Data: "",
+            Data:"",
+            DataMb: "",
             sponsor_china: "",
+            language:'',
             sponsor_overseas: "",
             organizer: "",
             title: "",
@@ -165,9 +167,11 @@
             axios
               .get(baseUrl + "index.php?action=getIndexContent")
               .then((res) => {
+                this.language = res.data.language
+                this.DataMb = res.data.mobile;
+                this.titleImageUrl = res.data.mobile.titleImageUrl;
+                this.button1 = res.data.mobile.button;
                 this.Data = res.data;
-                this.titleImageUrl = res.data.titleImageUrl;
-                this.button1 = res.data.button;
                 let lang = sessionStorage.getItem("lang");
                 if (lang == null) {
                   lang = "zh";
