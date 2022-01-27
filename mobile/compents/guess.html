@@ -1,58 +1,59 @@
 <!DOCTYPE html>
-<html lang="cn">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
+    <link rel="stylesheet" href="../css/common.css" />
     <link rel="stylesheet" href="../css/default.css" />
     <!-- 导入样式 -->
-    <link rel="stylesheet" href="../css/element.css" />
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
     <!-- 导入 Vue 3 -->
-    <script src="../js/Vue.js"></script>
+    <script src="//unpkg.com/vue@next"></script>
     <!-- 导入组件库 -->
-    <script src="../js/elementUI.js"></script>
+    <script src="//unpkg.com/element-plus"></script>
     <script src="../js/axios.js"></script>
     <style>
+      .videoSize{
+        width: 100%;
+        height: 90%;
+        background-color: black;
+      }
       .contents {
-        width: 1280px;
-        height: 900px;
+        width: 100vw;
         margin: 2% auto 0;
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
       }
       .block {
-        height: 80px;
-        text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        height: 8vh;
       }
       .agree {
-        width: 100%;
+        width: 95%;
         margin-top: 3%;
         height: 20px;
         display: flex;
-        justify-content: center;
+        justify-content: end;
         color: #99a2aa;
       }
       .itemTitle {
-        width: 100%;
-        height: 25px;
-        font-size: 15px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        cursor: pointer;
+        margin: 2% 3%;
+        font-size: 20px;
       }
-      .videoFather{
-        position: relative;
-        height: 170px;
-        overflow: hidden;
+      .item{
+        /* background-color: pink; */
+        margin-top: 8%;
       }
-      .iconfont{
+      .tiger{
+        width: 55vw;
         position: absolute;
-        margin-top: 50px;
-        margin-left: 120px;
-        z-index: 9;
+        top: 39px;
+        left: 43%;
       }
       [v-cloak] {
         display: none;
@@ -63,43 +64,57 @@
     <div id="app" v-cloak>
       <!-- header -->
       <div class="headerBack">
-        <img :src="titleImageUrl" style="width: 100%;">
+        <div class="header">
+          <div class="back clickEffict" @click="back">
+            <svg
+              t="1642405136125"
+              class="icon"
+              viewBox="0 0 1024 1024"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              p-id="3581"
+              width="32"
+              height="32"
+            >
+              <path
+                d="M624.788992 204.047974 585.205965 164.464026 219.560038 530.185011 585.205965 895.864013 624.788992 856.280986 298.663014 530.16105Z"
+                p-id="3582"
+                fill="#cdcdcd"
+              ></path>
+            </svg>
+          </div>
+          <div class="title">
+            <img :src="titleImageUrl" style="width: 90%"/>
+          </div>
+        
+        </div>
+        <div class="tiger">
+          <!-- <img src="../asset/2222.png" style="width: 100%"/> -->
+        </div>
       </div>
-      <!-- 画册区 -->
+      <!-- 展示区 -->
       <div class="contents">
-        <div
-          style="width: 300px; height: 235px;overflow: hidden;"
-          v-for="(item,index,id) in media"
-          :key="id"
-        >
+        <div class="item" v-for="(item,index,id) in media" :key="id">
           <div class="itemTitle" :title="item.title">{{item.title}}</div>
           <a :href="item.url" target="_blank"
             ><img
-              style="width: 300px;height: 170px;overflow: hidden;"
+              style="width: 100%"
               :src="item.url"
               v-if="item.type === 'image' "
           /></a>
-          <div v-if="item.type === 'video' ">
-            <a :href="item.url" target="_blank">
-            <div class="iconfont">
-              <svg t="1643185229733"  viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2212" width="64" height="64"><path d="M128 138.666667c0-47.232 33.322667-66.666667 74.176-43.562667l663.146667 374.954667c40.96 23.168 40.853333 60.8 0 83.882666L202.176 928.896C161.216 952.064 128 932.565333 128 885.333333v-746.666666z" fill="#3D3D3D" p-id="2213"></path></svg>
-            </div>
-           
-              <video
+          <div>
+            <video
+              class="videoSize"
+              v-if="item.type === 'video' "
               :src="item.url"
-              style="width: 100%;"
-              @click="test"
-              class="videoFather"
-            >
-           
-             </video>
-            </a>
+              controls
+            ></video>
           </div>
           <!-- 点赞 -->
           <div class="agree">
             <img
               :id="item.id"
-              style="width: 20px; height: 20px; cursor: pointer;"
+              style="width: 20px; height: 20px; cursor: pointer"
               @click="zan($event)"
               :src="item.clickSrc"
             />
@@ -112,19 +127,18 @@
         <el-pagination
           layout="prev, pager, next"
           :total="totalCount"
-          
           @current-change="handleCurrentChange"
         >
         </el-pagination>
       </div>
     </div>
     <script type="module">
-      import  {baseUrl} from "../js/config.js";
+      import { baseUrl } from "../js/config.js";
       let lang = sessionStorage.getItem("lang");
       const App = {
         data() {
           return {
-            media: [],
+            media: "",
             currentPage: 1,
             pageSize: 12,
             totalCount: 1,
@@ -133,7 +147,6 @@
             titleImageUrl: "",
           };
         },
-
         created() {
           this.getData();
         },
@@ -141,7 +154,7 @@
           getData(n1, n2) {
             let url =
               baseUrl +
-              "activity.php?action=getDrawContent&pageSize=" +
+              "activity.php?action=getGuessContent&pageSize=" +
               n1 +
               "&currentPage=" +
               n2;
@@ -150,7 +163,7 @@
               document.title = res.data[lang].title;
               this.mainTitle = res.data[lang].mainTitle;
               this.subTitle = res.data[lang].subTitle;
-              this.titleImageUrl = res.data.pc.titleImageUrl;
+              this.titleImageUrl = res.data.mobile.titleImageUrl;
               let media = res.data.media;
               let now = new Date();
               let today =
@@ -171,6 +184,9 @@
               }
               this.media = media;
             });
+          },
+          back() {
+            window.history.back();
           },
           handleCurrentChange(val) {
             this.currentPage = val;
@@ -213,12 +229,8 @@
             });
             e.srcElement.src = "../img/zanClicked.svg";
           },
-          test(){
-            console.log("123");
-          }
         },
       };
-
       const app = Vue.createApp(App);
       app.use(ElementPlus);
       app.mount("#app");
