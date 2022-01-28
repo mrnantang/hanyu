@@ -30,14 +30,14 @@
       </div>
       <!-- 公告 -->
       <div class="content">
-          <div class="text">
-            {{mainContent}}
-          </div>
+          <div class="text" v-html="mainContent"></div>
       </div>
     </div>
     <script type="module">
-      import { baseUrl } from "../js/config.js";
-        let lang = sessionStorage.getItem("lang");
+      import  {baseUrl, ifJumpTo} from "../js/config.js";
+        let lang = sessionStorage.getItem("lang"); if (lang == null) {
+                lang = "zh";
+              }
       const app = {
         data() {
           return {
@@ -47,7 +47,7 @@
         },
         created() {
           this.getData();
-          
+          ifJumpTo(window.location.pathname+window.location.search);
         },
         methods: {
           getData() {
@@ -57,6 +57,9 @@
                 baseUrl + "activity.php?action=getNoticeContent&page="+page
               )
               .then((res) => {
+                if (lang == null) {
+                lang = "zh";
+              }
                 document.title = res.data[lang].title;
                 this.titleImageUrl = res.data.pc.titleImageUrl;
                 this.mainContent = res.data.mainContent;

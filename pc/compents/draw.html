@@ -119,8 +119,10 @@
       </div>
     </div>
     <script type="module">
-      import  {baseUrl} from "../js/config.js";
-      let lang = sessionStorage.getItem("lang");
+      import  {baseUrl,ifJumpTo} from "../js/config.js";
+      let lang = sessionStorage.getItem("lang"); if (lang == null) {
+                lang = "zh";
+              }
       const App = {
         data() {
           return {
@@ -136,6 +138,7 @@
 
         created() {
           this.getData();
+          ifJumpTo(window.location.pathname+window.location.search);
         },
         methods: {
           getData(n1, n2) {

@@ -76,7 +76,7 @@
     </div>
   </div>
   <script type="module">
-    import { baseUrl } from "./js/config.js";
+    import { baseUrl,ifJumpTo} from "./js/config.js";
     const App = {
       data() {
         return {
@@ -95,6 +95,7 @@
       },
       created() {
         this.getData();
+        ifJumpTo(window.location.pathname+window.location.search);
       },
       methods: {
         getData() {
@@ -107,7 +108,9 @@
               this.backgroundImageUrl = res.data.pc.backgroundImageUrl;
               this.button1 = res.data.pc.button;
               this.Data = res.data;
-              let lang = sessionStorage.getItem("lang");
+              let lang = sessionStorage.getItem("lang"); if (lang == null) {
+                lang = "zh";
+              }
               if (lang == null) {
                 lang = "zh";
               }

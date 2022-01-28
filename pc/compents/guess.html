@@ -43,12 +43,12 @@
         text-overflow: ellipsis;
         cursor: pointer;
       }
-      .videoFather{
+      .videoFather {
         position: relative;
         height: 170px;
         overflow: hidden;
       }
-      .iconfont{
+      .iconfont {
         position: absolute;
         margin-top: 50px;
         margin-left: 120px;
@@ -63,43 +63,55 @@
     <div id="app" v-cloak>
       <!-- header -->
       <div class="headerBack">
-        <img :src="titleImageUrl" style="width: 100%;">
+        <img :src="titleImageUrl" style="width: 100%" />
       </div>
       <!-- 画册区 -->
       <div class="contents">
         <div
-          style="width: 300px; height: 235px;overflow: hidden;"
+          style="width: 300px; height: 235px; overflow: hidden"
           v-for="(item,index,id) in media"
           :key="id"
         >
           <div class="itemTitle" :title="item.title">{{item.title}}</div>
           <a :href="item.url" target="_blank"
             ><img
-              style="width: 300px;height: 170px;overflow: hidden;"
+              style="width: 300px; height: 170px; overflow: hidden"
               :src="item.url"
               v-if="item.type === 'image' "
           /></a>
           <div v-if="item.type === 'video' ">
             <a :href="item.url" target="_blank">
-            <div class="iconfont">
-              <svg t="1643185229733"  viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2212" width="64" height="64"><path d="M128 138.666667c0-47.232 33.322667-66.666667 74.176-43.562667l663.146667 374.954667c40.96 23.168 40.853333 60.8 0 83.882666L202.176 928.896C161.216 952.064 128 932.565333 128 885.333333v-746.666666z" fill="#3D3D3D" p-id="2213"></path></svg>
-            </div>
-           
+              <div class="iconfont">
+                <svg
+                  t="1643185229733"
+                  viewBox="0 0 1024 1024"
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  p-id="2212"
+                  width="64"
+                  height="64"
+                >
+                  <path
+                    d="M128 138.666667c0-47.232 33.322667-66.666667 74.176-43.562667l663.146667 374.954667c40.96 23.168 40.853333 60.8 0 83.882666L202.176 928.896C161.216 952.064 128 932.565333 128 885.333333v-746.666666z"
+                    fill="#3D3D3D"
+                    p-id="2213"
+                  ></path>
+                </svg>
+              </div>
+
               <video
-              :src="item.url"
-              style="width: 100%;"
-              @click="test"
-              class="videoFather"
-            >
-           
-             </video>
+                :src="item.url"
+                style="width: 100%"
+                @click="test"
+                class="videoFather"
+              ></video>
             </a>
           </div>
           <!-- 点赞 -->
           <div class="agree">
             <img
               :id="item.id"
-              style="width: 20px; height: 20px; cursor: pointer;"
+              style="width: 20px; height: 20px; cursor: pointer"
               @click="zan($event)"
               :src="item.clickSrc"
             />
@@ -112,15 +124,17 @@
         <el-pagination
           layout="prev, pager, next"
           :total="totalCount"
-          
           @current-change="handleCurrentChange"
         >
         </el-pagination>
       </div>
     </div>
     <script type="module">
-      import  {baseUrl} from "../js/config.js";
+      import { baseUrl, ifJumpTo } from "../js/config.js";
       let lang = sessionStorage.getItem("lang");
+      if (lang == null) {
+        lang = "zh";
+      }
       const App = {
         data() {
           return {
@@ -136,6 +150,7 @@
 
         created() {
           this.getData();
+          ifJumpTo(window.location.pathname + window.location.search);
         },
         methods: {
           getData(n1, n2) {
@@ -175,7 +190,7 @@
           handleCurrentChange(val) {
             this.currentPage = val;
             document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0
+            document.documentElement.scrollTop = 0;
             this.getData(this.pageSize, val);
           },
           zan(e) {
@@ -213,9 +228,9 @@
             });
             e.srcElement.src = "../img/zanClicked.svg";
           },
-          test(){
+          test() {
             console.log("123");
-          }
+          },
         },
       };
 

@@ -15,11 +15,6 @@
     <script src="//unpkg.com/element-plus"></script>
     <script src="../js/axios.js"></script>
     <style>
-      .videoSize{
-        width: 100%;
-        height: 90%;
-        background-color: black;
-      }
       .contents {
         width: 100vw;
         margin: 2% auto 0;
@@ -33,20 +28,11 @@
           justify-content: center;
         height: 8vh;
       }
-      .agree {
-        width: 95%;
-        margin-top: 3%;
-        height: 20px;
-        display: flex;
-        justify-content: end;
-        color: #99a2aa;
-      }
       .itemTitle {
         margin: 2% 3%;
         font-size: 20px;
       }
       .item{
-        /* background-color: pink; */
         margin-top: 8%;
       }
       .tiger{
@@ -65,44 +51,25 @@
       <!-- header -->
       <div class="headerBack">
         <div class="header">
-          <div class="back clickEffict" @click="back">
-            <svg
-              t="1642405136125"
-              class="icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="3581"
-              width="32"
-              height="32"
-            >
-              <path
-                d="M624.788992 204.047974 585.205965 164.464026 219.560038 530.185011 585.205965 895.864013 624.788992 856.280986 298.663014 530.16105Z"
-                p-id="3582"
-                fill="#cdcdcd"
-              ></path>
-            </svg>
-          </div>
-          <div class="title">
-            <img :src="titleImageUrl" style="width: 90%"/>
-          </div>
-        
+            <img :src="titleImageUrl" style="width: 100%"/>
         </div>
-        <div class="tiger">
-          <!-- <img src="../asset/2222.png" style="width: 100%"/> -->
+        <div class="back clickEffict" @click="back">
+          <svg t="1643341012348" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2048" width="32" height="32"><path d="M710.153924 8.980397L266.007127 460.692524a81.118646 81.118646 0 0 0 0.861532 114.476097l446.192936 441.050666a26.922883 26.922883 0 0 0 37.853573-38.284339L304.722232 536.884282a27.27288 27.27288 0 0 1-0.323074-38.445877L748.545955 46.726278A26.922883 26.922883 0 1 0 710.180847 9.00732z" p-id="2049" fill="#1296db"></path></svg>
         </div>
       </div>
       <!-- 展示区 -->
       <div class="contents">
         <div class="item" v-for="(item,index,id) in media" :key="id">
           <div class="itemTitle" :title="item.title">{{item.title}}</div>
-          <a :href="item.url" target="_blank"
-            ><img
-              style="width: 100%"
-              :src="item.url"
-              v-if="item.type === 'image' "
-          /></a>
-          <div>
+          <div  class="videoFather">
+            <a :href="item.url" target="_blank"
+              ><img
+                style="width: 90%"
+                :src="item.url"
+                v-if="item.type === 'image' "
+            /></a>
+          </div>
+          <div class="videoFather">
             <video
               class="videoSize"
               v-if="item.type === 'video' "
@@ -112,14 +79,15 @@
           </div>
           <!-- 点赞 -->
           <div class="agree">
-            <img
-              :id="item.id"
-              style="width: 20px; height: 20px; cursor: pointer"
-              @click="zan($event)"
-              :src="item.clickSrc"
-            />
-            &nbsp;
-            <div :id="item.clickId">{{item.likeNum}}</div>
+            <div >
+              <img
+                :id="item.id"
+                style="width: 20px; height: 20px; cursor: pointer"
+                @click="zan($event)"
+                :src="item.clickSrc"
+              />
+            </div>
+            <div style="margin-left: 5px;" :id="item.clickId">{{item.likeNum}}</div>
           </div>
         </div>
       </div>
@@ -133,8 +101,10 @@
       </div>
     </div>
     <script type="module">
-      import { baseUrl } from "../js/config.js";
-      let lang = sessionStorage.getItem("lang");
+      import  {baseUrl, ifJumpTo} from "../js/config.js";
+      let lang = sessionStorage.getItem("lang"); if (lang == null) {
+                lang = "zh";
+              }
       const App = {
         data() {
           return {
@@ -149,6 +119,7 @@
         },
         created() {
           this.getData();
+          ifJumpTo(window.location.pathname+window.location.search);
         },
         methods: {
           getData(n1, n2) {
@@ -159,6 +130,9 @@
               "&currentPage=" +
               n2;
             axios.get(url).then((res) => {
+              if (lang == null) {
+                lang = "zh";
+              }
               this.totalCount = res.data.mediaTotalCount;
               document.title = res.data[lang].title;
               this.mainTitle = res.data[lang].mainTitle;
