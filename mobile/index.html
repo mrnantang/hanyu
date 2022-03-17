@@ -7,7 +7,7 @@
     <title></title>
     <link rel="stylesheet" href="./css/default.css" />
     <!-- 导入样式 -->
-    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+    <link rel="stylesheet" href="./css/element.css" />
     <script>
       var _hmt = _hmt || [];
       (function () {
@@ -18,9 +18,9 @@
       })();
   </script>
     <!-- 导入 Vue 3 -->
-    <script src="//unpkg.com/vue@next"></script>
+    <script src="./js/Vue.js"></script>
     <!-- 导入组件库 -->
-    <script src="//unpkg.com/element-plus"></script>
+    <script src="./js/elementUI.js"></script>
     <script src="./js/axios.js"></script>
     <style>
        .app {
@@ -88,7 +88,7 @@
         <img :src="titleImageUrl" style="width: 100%; margin-top: 5%" />
       </div>
       <!-- 选择语言 -->
-      <div class="changeLanguage">
+      <!-- <div class="changeLanguage">
         <el-dropdown size="large" @command="handleCommand">
           <el-button type="danger">
             {{changeLanguage}} &nbsp;
@@ -120,7 +120,7 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-      </div>
+      </div> -->
       <!-- 内容区 -->
       <div class="contents">
         <ul class="list">
@@ -145,7 +145,7 @@
         <div class="organizer">
           <p>{{sponsor_china}}</p>
           <p>{{sponsor_overseas}}</p>
-          <p>{{organizer}}</p>
+          <p v-html="organizer"></p>
         </div>
       </div>
     </div>
@@ -164,7 +164,7 @@
             changeLanguage: "",
             titleImageUrl: "",
             button1: "",
-            backgroundImageUrl:''
+            backgroundImageUrl:'https://lz06-1301325388.cos.ap-chengdu.myqcloud.com/2022charmingchinese/m-bg1.png'
           };
         },
         created() {
@@ -180,13 +180,13 @@
                 this.DataMb = res.data.mobile;
                 this.titleImageUrl = res.data.mobile.titleImageUrl;
                 this.backgroundImageUrl = res.data.mobile.backgroundImageUrl;
-
                 this.button1 = res.data.mobile.button;
                 this.Data = res.data;
-                let lang = sessionStorage.getItem("lang"); if (lang == null) {
+                let lang = sessionStorage.getItem("lang");
+                if (lang == null || lang == "null") {
                 lang = "zh";
               }
-                if (lang == null) {
+              if (lang == null || lang == "null") {
                   lang = "zh";
                 }
                 this.handleCommand(lang);

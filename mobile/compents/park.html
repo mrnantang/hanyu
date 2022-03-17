@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="../css/common.css" />
     <link rel="stylesheet" href="../css/default.css" />
     <!-- 导入样式 -->
-    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+    <link rel="stylesheet" href="../css/element.css" />
     <!-- 导入 Vue 3 -->
-    <script src="//unpkg.com/vue@next"></script>
+    <script src="../js/Vue.js"></script>
     <!-- 导入组件库 -->
-    <script src="//unpkg.com/element-plus"></script>
+    <script src="../js/elementUI.js"></script>
     <script src="../js/axios.js"></script>
     <style>
       .contents {
@@ -22,26 +22,49 @@
         justify-content: space-between;
         flex-wrap: wrap;
       }
+
       .block {
         display: flex;
         align-items: center;
         justify-content: center;
         height: 8vh;
       }
-     
-      .itemTitle {
-        margin: 2% 3%;
-        font-size: 20px;
-      }
+
       .item {
-        /* background-color: pink; */
         margin-top: 8%;
       }
+
+      /* 
+    
+    
+    */
+      .changeCard {
+        width: 100vw;
+        height: 5vh;
+        margin: 0 auto;
+        display: flex;
+      }
+
+      .changeFather {
+        position: absolute;
+        top: 0;
+        width: 100vw;
+        height: 5vh;
+        display: flex;
+      }
+
+      .itemTitle {
+        width: 100%;
+        height: 65px;
+      }
+
+      /*  */
       [v-cloak] {
         display: none;
       }
     </style>
   </head>
+
   <body>
     <div id="app" v-cloak>
       <!-- header -->
@@ -50,29 +73,29 @@
           <img :src="titleImageUrl" style="width: 100%" />
         </div>
         <div class="back clickEffict" @click="back">
-          <svg
-            t="1643341012348"
-            class="icon"
-            viewBox="0 0 1024 1024"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            p-id="2048"
-            width="32"
-            height="32"
-          >
-            <path
-              d="M710.153924 8.980397L266.007127 460.692524a81.118646 81.118646 0 0 0 0.861532 114.476097l446.192936 441.050666a26.922883 26.922883 0 0 0 37.853573-38.284339L304.722232 536.884282a27.27288 27.27288 0 0 1-0.323074-38.445877L748.545955 46.726278A26.922883 26.922883 0 1 0 710.180847 9.00732z"
-              p-id="2049"
-              fill="#1296db"
-            ></path>
-          </svg>
+          <img src="../asset/back.png" style="width: 80%" />
         </div>
       </div>
       <!-- 展示区 -->
       <div class="contents">
+        <!-- 选项卡 -->
+        <div class="changeCard">
+          <div
+            class="itemTitle"
+            v-for="(item, index) in schoolList"
+            :key="index"
+          >
+            <img
+              ref="ImgWord"
+              style="width: 100%"
+              :src="item.schoolName"
+              @click="test(item.schoolId,item.schoolNameAlive,index)"
+            />
+          </div>
+        </div>
+        <!--  -->
         <div class="item" v-for="(item,index,id) in media" :key="id">
-          <div class="itemTitle" :title="item.title">{{item.title}}</div>
-          <div  class="videoFather">
+          <div class="videoFather">
             <a :href="item.url" target="_blank"
               ><img
                 style="width: 90%"
@@ -89,32 +112,36 @@
             ></video>
           </div>
           <!-- 点赞 -->
-        <div class="agree">
-          <div >
-            <img
-              :id="item.id"
-              style="width: 20px; height: 20px; cursor: pointer"
-              @click="zan($event)"
-              :src="item.clickSrc"
-            />
+          <div class="agree" style="display: none">
+            <div>
+              <img
+                :id="item.id"
+                style="width: 20px; height: 20px; cursor: pointer"
+                @click="zan($event)"
+                :src="item.clickSrc"
+              />
+            </div>
+            <div style="margin-left: 5px" :id="item.clickId">
+              {{item.likeNum}}
+            </div>
           </div>
-          <div style="margin-left: 5px;" :id="item.clickId">{{item.likeNum}}</div>
-        </div>
         </div>
       </div>
-      <div class="block">
-        <el-pagination
-          layout="prev, pager, next"
-          :total="totalCount"
-          @current-change="handleCurrentChange"
-        >
-        </el-pagination>
+      <div class="block" style="display: none">
+        <!-- <el-pagination layout="prev, pager, next" :total="totalCount" @current-change="handleCurrentChange"
+        :page-count="mediaTotalPage">
+      </el-pagination> -->
       </div>
     </div>
     <script type="module">
-      import { baseUrl, ifJumpTo } from "../js/config.js";
+      import {
+        baseUrl,
+        ifJumpTo,
+        maxClickTimesInOneDay,
+        maxClickTimesMsg,
+      } from "../js/config.js";
       let lang = sessionStorage.getItem("lang");
-      if (lang == null) {
+      if (lang == null || lang == "null") {
         lang = "zh";
       }
       const App = {
@@ -122,32 +149,57 @@
           return {
             media: "",
             currentPage: 1,
-            pageSize: 12,
+            pageSize: 1000,
             totalCount: 1,
             mainTitle: "",
             subTitle: "",
             titleImageUrl: "",
+            mediaTotalPage: 0,
+            schoolList: [
+              {
+                schoolName: "../img/a2.png",
+                schoolNameAlive: "../img/a1.png",
+                schoolId: 1,
+              },
+              {
+                schoolName: "../img/b2.png",
+                schoolNameAlive: "../img/b1.png",
+                schoolId: 2,
+              },
+              {
+                schoolName: "../img/c2.png",
+                schoolNameAlive: "../img/c1.png",
+                schoolId: 3,
+              },
+            ],
           };
         },
         created() {
-          this.getData();
+          this.getData(1);
           ifJumpTo(window.location.pathname + window.location.search);
         },
         methods: {
-          getData(n1, n2) {
+          getData(schoolId) {
             let url =
               baseUrl +
               "activity.php?action=getParkContent&pageSize=" +
-              n1 +
+              this.pageSize +
               "&currentPage=" +
-              n2;
+              this.currentPage +
+              "&schoolId=" +
+              schoolId;
             axios.get(url).then((res) => {
+              if (lang == null || lang == "null") {
+                lang = "zh";
+              }
               this.totalCount = res.data.mediaTotalCount;
               document.title = res.data[lang].title;
               this.mainTitle = res.data[lang].mainTitle;
               this.subTitle = res.data[lang].subTitle;
               this.titleImageUrl = res.data.mobile.titleImageUrl;
+              this.mediaTotalPage = res.data.mediaTotalPage;
               let media = res.data.media;
+
               let now = new Date();
               let today =
                 now.getFullYear() +
@@ -157,8 +209,12 @@
                 now.getDate();
 
               for (let i = 0; i < media.length; i++) {
-                let date = localStorage.getItem("media_" + media[i].id);
-                if (date && date == today) {
+                let clickedTimesToday = localStorage.getItem(
+                  "media_" + media[i].id + "_" + today
+                );
+                if (clickedTimesToday == null) {
+                  media[i].clickSrc = "../img/zan.svg";
+                } else if (parseInt(clickedTimesToday) != NaN) {
                   media[i].clickSrc = "../img/zanClicked.svg";
                 } else {
                   media[i].clickSrc = "../img/zan.svg";
@@ -171,34 +227,55 @@
           back() {
             window.history.back();
           },
-          handleCurrentChange(val) {
-            this.currentPage = val;
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-            this.getData(this.pageSize, val);
-          },
+          // handleCurrentChange(val) {
+          //   this.currentPage = val;
+          //   document.body.scrollTop = 0;
+          //   document.documentElement.scrollTop = 0;
+          //   this.getData(this.pageSize, val);
+          // },
           zan(e) {
+            let now = new Date();
+            let today =
+              now.getFullYear() +
+              "-" +
+              (now.getMonth() + 1) +
+              "-" +
+              now.getDate();
+            let mediaId = e.srcElement.id;
+            let clickedTimesToday = localStorage.getItem(
+              "media_" + mediaId + "_" + today
+            );
+            if (
+              clickedTimesToday == null ||
+              parseInt(clickedTimesToday) == NaN
+            ) {
+              localStorage.setItem("media_" + mediaId + "_" + today, 1);
+            } else if (parseInt(clickedTimesToday) >= maxClickTimesInOneDay) {
+              alert(maxClickTimesMsg);
+              return;
+            } else {
+              clickedTimesToday++;
+              localStorage.setItem(
+                "media_" + mediaId + "_" + today,
+                clickedTimesToday
+              );
+            }
             let url = baseUrl + "media.php";
             let data = {
               action: "clickLike",
               mediaId: e.srcElement.id,
             };
             axios.post(url, data).then((res) => {
-              let now = new Date();
-              let today =
-                now.getFullYear() +
-                "-" +
-                (now.getMonth() + 1) +
-                "-" +
-                now.getDate();
-              localStorage.setItem("media_" + e.srcElement.id, today);
               document.querySelector("#click_" + e.srcElement.id).innerHTML =
                 res.data.likeNum;
-
               let media = this.media;
               for (let i = 0; i < media.length; i++) {
-                let date = localStorage.getItem("media_" + media[i].id);
-                if (date && date == today) {
+                let clickedTimesToday = localStorage.getItem(
+                  "media_" + media[i].id + "_" + today
+                );
+                if (clickedTimesToday == null) {
+                  media[i].clickSrc = "../img/zan.svg";
+                } else if (parseInt(clickedTimesToday) != NaN) {
                   media[i].clickSrc = "../img/zanClicked.svg";
                 } else {
                   media[i].clickSrc = "../img/zan.svg";
@@ -211,6 +288,16 @@
               this.media = media;
             });
             e.srcElement.src = "../img/zanClicked.svg";
+          },
+          test(schoolId, schoolNameAlive,index) {
+            this.getData(schoolId);
+            const ImgWord = this.$refs.ImgWord;
+            for (let i = 0; i < this.schoolList.length; i++) {
+              for (let i = 0; i < ImgWord.length; i++) {
+                ImgWord[i].src = this.schoolList[i].schoolName;
+              }
+            }
+            ImgWord[index].src = schoolNameAlive;
           },
         },
       };

@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="./css/default.css" />
   <link rel="stylesheet" href="./css/index.css">
   <!-- 导入样式 -->
-  <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+  <link rel="stylesheet" href="./css/element.css" />
   <script>
     var _hmt = _hmt || [];
     (function () {
@@ -20,39 +20,22 @@
     })();
   </script>
   <!-- 导入 Vue 3 -->
-  <script src="//unpkg.com/vue@next"></script>
+  <script src="./js/Vue.js"></script>
   <!-- 导入组件库 -->
-  <script src="//unpkg.com/element-plus"></script>
+  <script src="./js/elementUI.js"></script>
   <script src="./js/axios.js"></script>
 </head>
 
 <body>
   <div id="app" v-cloak>
-    <img class="app" :src="backgroundImageUrl"/>
+    <img class="app" :src="backgroundImageUrl" />
     <!-- header -->
     <div class="header">
       <div class="title">
         <img :src="titleImageUrl" style="width: 80%" />
       </div>
       <div>
-        <el-dropdown size="large" @command="handleCommand">
-          <el-button type="danger">
-            {{changeLanguage}} &nbsp;
-            <svg t="1641818630955" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-              p-id="2112" width="16" height="16">
-              <path
-                d="M966.4 323.2c-9.6-9.6-25.6-9.6-35.2 0l-416 416-425.6-416c-9.6-9.6-25.6-9.6-35.2 0-9.6 9.6-9.6 25.6 0 35.2l441.6 432c9.6 9.6 25.6 9.6 35.2 0l435.2-432C976 345.6 976 332.8 966.4 323.2z"
-                p-id="2113" fill="#ffffff"></path>
-            </svg>
-          </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item v-for="(item,key) in language" :command="key">
-                {{item}}
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+        <el-dropdown style="display: none;" @command="handleCommand"></el-dropdown>
       </div>
     </div>
     <!-- 内容区 -->
@@ -71,31 +54,31 @@
       <div class="organizer">
         <p>{{sponsor_china}}</p>
         <p>{{sponsor_overseas}}</p>
-        <p>{{organizer}}</p>
+        <p v-html="organizer"></p>
       </div>
     </div>
   </div>
   <script type="module">
-    import { baseUrl,ifJumpTo} from "./js/config.js";
+    import { baseUrl, ifJumpTo } from "./js/config.js";
     const App = {
       data() {
         return {
-          Data:'',
+          Data: '',
           DataPc: "",
-          language:'',
+          language: '',
           sponsor_china: "",
           sponsor_overseas: "",
           organizer: "",
           title: "",
           changeLanguage: "",
           titleImageUrl: "",
-          backgroundImageUrl: "",
+          backgroundImageUrl: "https://lz06-1301325388.cos.ap-chengdu.myqcloud.com/2022charmingchinese/background.png",
           button1: "",
         };
       },
       created() {
         this.getData();
-        ifJumpTo(window.location.pathname+window.location.search);
+        ifJumpTo(window.location.pathname + window.location.search);
       },
       methods: {
         getData() {
@@ -108,17 +91,15 @@
               this.backgroundImageUrl = res.data.pc.backgroundImageUrl;
               this.button1 = res.data.pc.button;
               this.Data = res.data;
-              let lang = sessionStorage.getItem("lang"); if (lang == null) {
-                lang = "zh";
-              }
-              if (lang == null) {
+              let lang = sessionStorage.getItem("lang");
+              if (lang == null || lang == "null") {
                 lang = "zh";
               }
               this.handleCommand(lang);
             });
         },
         jumpUrl(url) {
-          window.open(url);
+          location.href = url
         },
         handleCommand(lang) {
           sessionStorage.setItem("lang", lang);

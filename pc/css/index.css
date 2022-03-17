@@ -4,7 +4,6 @@
         text-align: center;
         margin-left: 75%;
         width: 20%;
-        height: 660px;
       }
 
       .button1 {
@@ -43,7 +42,7 @@
       }
 
       .header {
-        width: 85%;
+        width: 92%;
         height: 15vh;
         line-height: 12vh;
         margin: 0 auto;
@@ -53,6 +52,7 @@
 
       .title {
         width: 900px;
+        margin-top: 2%;
       }
 
       .clickEffict:active {
@@ -65,7 +65,7 @@
 
       .footer {
         width: 100%;
-        margin-top: 105px;
+        margin-top: 140px;
       }
 
       .organizer {
@@ -81,10 +81,10 @@
     }
 
     /* 笔记本 */
-    @media screen and (max-width:1380px) {
+    @media screen and (max-width:1439px) {
       .list {
         text-align: center;
-        margin-left: 75%;
+        margin-left: 70%;
         width: 20%;
         height: 330px;
       }
@@ -125,7 +125,7 @@
       }
 
       .header {
-        width: 92%;
+        width: 97%;
         height: 15vh;
         line-height: 12vh;
         margin: 0 auto;
@@ -135,6 +135,7 @@
 
       .title {
         width: 700px;
+        margin-top: 2%;
       }
 
       .clickEffict:active {

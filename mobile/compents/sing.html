@@ -1,92 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
-    <link rel="stylesheet" href="../css/default.css" />
-    <link rel="stylesheet" href="../css/common.css">
-    <script src="//unpkg.com/vue@next"></script>
-    <script src="../js/axios.js"></script>
-    <style>
-    .instruction{
-     font-size: 18px;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <link rel="stylesheet" href="../css/default.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <script src="../js/Vue.js"></script>
+  <script src="../js/axios.js"></script>
+  <style>
+    .instruction {
+      width: 90vw;
+      margin: 0 auto;
+      font-size: 18px;
     }
-    .video{
-        text-align: center;
+
+    .video {
+      width: 90vw;
+      margin: 25px auto;
+      text-align: center;
     }
-    .videoTitle{
+
+    .videoTitle {
+      margin-top: 5px;
       font-size: 32px;
     }
-    .videoSize{
+
+    textWord {
+      margin: 0 auto;
+      width: 90vw;
+      font-size: 24px;
+    }
+
+    .videoSize {
       width: 100%;
       margin-top: 2%;
       background-color: black;
     }
 
-      [v-cloak] {
-        display: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="app" v-clock>
-       <!-- header -->
-       <div class="headerBack">
-        <div class="header">
-            <img :src="titleImageUrl" style="width: 100%"/>
-        </div>
-        <div class="back clickEffict" @click="back">
-          <svg t="1643341012348" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2048" width="32" height="32"><path d="M710.153924 8.980397L266.007127 460.692524a81.118646 81.118646 0 0 0 0.861532 114.476097l446.192936 441.050666a26.922883 26.922883 0 0 0 37.853573-38.284339L304.722232 536.884282a27.27288 27.27288 0 0 1-0.323074-38.445877L748.545955 46.726278A26.922883 26.922883 0 1 0 710.180847 9.00732z" p-id="2049" fill="#1296db"></path></svg>
-        </div>
+    .textWord {
+      margin: 50px auto 50px;
+      width: 92vw;
+      text-indent: 36px;
+      font-size: 20px;
+    }
+
+    .agreeVideo {
+      position: absolute;
+      left: 10%;
+      height: 20px;
+      display: flex;
+      color: #99a2aa;
+    }
+
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app" v-clock>
+    <!-- header -->
+    <div class="headerBack">
+      <div class="header">
+        <img :src="titleImageUrl" style="width: 100%" />
       </div>
-      <!-- 内容区 -->
-      <div>
-        <div class="instruction">
-            {{mainContent}}
-        </div>
-          <div class="video" v-for="item in video">
-              <span class="videoTitle">{{item.title}}</span>
-              <br>
-              <video class="videoSize" :src="item.url"  controls></video>
-          </div>
+      <div class="back clickEffict" @click="back">
+        <img src="../asset/back.png" style="width:80%">
       </div>
     </div>
-    <script type="module">
-      import  {baseUrl, ifJumpTo} from "../js/config.js";
-      let lang = sessionStorage.getItem("lang"); if (lang == null) {
-                lang = "zh";
-              }
-      const app = {
-        data() {
-          return {
-            video: "",
-            titleImageUrl: "",
-            mainContent: "",
+    <!-- 内容区 -->
+    <div>
+      <div class="instruction" v-html="mainContent"></div>
+      <div class="video" v-for="item in video">
+        <span class="videoTitle">{{item.title}}</span>
+        <video class="videoSize" :src="item.url" controls></video>
+        <br />
+        <br />
+        <br />
+        <br />
+        <div class="agreeVideo">
+          <img style="width: 100%;" id="click_0" @click="zan($event)" :src=imageUrl />
+          &nbsp;
+          <div id="likeNumId">{{item.likeNum}}</div>
+
+        </div>
+      </div>
+
+      <div class="textWord">
+        <p>2022年，当虎年春节遇上北京冬奥，年味与赛事撞个满怀。海内外青少年们在“魅力汉语全球行”主题活动中,以歌声喜迎冬奥，欢度春节，“一起向未来”。</p>
+        <p>The Spring Festival and 2022 Beijing Winter Olympics come in pairs. In the Charming Chinese Event, singing
+          songs Together for a Shared Future, young people from home and abroad celebrate the Chinese New Year of Tiger
+          and cheer the athletes on for the Winter Olympics.</p>
+      </div>
+    </div>
+  </div>
+  <script type="module">
+    import { baseUrl, ifJumpTo, maxClickTimesInOneDay, maxClickTimesMsg } from "../js/config.js";
+    let lang = sessionStorage.getItem("lang");
+    if (lang == null || lang == "null") {
+      lang = "zh";
+    }
+    const app = {
+      data() {
+        return {
+          video: "",
+          titleImageUrl: "",
+          mainContent: "",
+          likeNum: 0,
+          mediaId: 0,
+          imageUrl: "../img/zan.svg"
+        };
+      },
+      created() {
+        this.getData();
+        ifJumpTo(window.location.pathname + window.location.search);
+      },
+      mounted() {
+        this.checkClicked();
+      },
+      methods: {
+        getData() {
+          axios
+            .get(baseUrl + "activity.php?action=getSingContent")
+            .then((res) => {
+              this.video = res.data.video;
+              document.title = res.data[lang].title;
+              this.titleImageUrl = res.data.mobile.titleImageUrl;
+              this.mainContent = res.data.mainContent;
+            });
+        },
+        back() {
+          window.history.back();
+        },
+        checkClicked() {
+          let now = new Date();
+          let today =
+            now.getFullYear() +
+            "-" +
+            (now.getMonth() + 1) +
+            "-" +
+            now.getDate();
+          let clickedTimesToday = localStorage.getItem("media_" + this.mediaId + "_" + today);
+          if (clickedTimesToday == null || parseInt(clickedTimesToday) == NaN) {
+
+          } else {
+            this.imageUrl = "../img/zanClicked.svg";
+          }
+        },
+        zan(e) {
+          let now = new Date();
+          let today =
+            now.getFullYear() +
+            "-" +
+            (now.getMonth() + 1) +
+            "-" +
+            now.getDate();
+          let clickedTimesToday = localStorage.getItem("media_" + this.mediaId + "_" + today);
+          if (clickedTimesToday == null || parseInt(clickedTimesToday) == NaN) {
+            localStorage.setItem("media_" + this.mediaId + "_" + today, 1);
+          } else if (parseInt(clickedTimesToday) >= maxClickTimesInOneDay) {
+            alert(maxClickTimesMsg);
+            return;
+          } else {
+            clickedTimesToday++;
+            localStorage.setItem("media_" + this.mediaId + "_" + today, clickedTimesToday);
+          }
+          let url = baseUrl + "media.php";
+          let data = {
+            action: "clickSingLike",
+            mediaId: this.mediaId,
           };
-        },
-        created() {
-          this.getData();
-          ifJumpTo(window.location.pathname+window.location.search);
-        },
-        methods: {
-          getData() {
-            axios
-              .get(baseUrl + "activity.php?action=getSingContent")
-              .then((res) => {
-                this.video = res.data.video;
-                document.title = res.data[lang].title;
-                this.titleImageUrl = res.data.mobile.titleImageUrl;
-                this.mainContent = res.data.mainContent;
-              });
-          },
-          back() {
-            window.history.back();
-          },
-        },
-      };
-      Vue.createApp(app).mount("#app");
-    </script>
-  </body>
+          axios.post(url, data).then((res) => {
+            document.querySelector("#click_" + this.mediaId).innerHTML =
+              res.data.likeNum;
+
+            let clickedTimesToday = localStorage.getItem("media_" + this.mediaId + "_" + today);
+            if (clickedTimesToday == null) {
+              document.getElementById("click_" + this.mediaId).src = "../img/zan.svg";
+            } else if (parseInt(clickedTimesToday) != NaN) {
+              document.getElementById("click_" + this.mediaId).src = "../img/zanClicked.svg";
+            } else {
+              document.getElementById("click_" + this.mediaId).src = "../img/zan.svg";
+            }
+
+            document.getElementById("likeNumId").innerHTML = res.data.likeNum;
+          });
+        }
+      },
+    };
+    Vue.createApp(app).mount("#app");
+  </script>
+</body>
+
 </html>

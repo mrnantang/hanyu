@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cn">
 
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title></title>
-  <link rel="stylesheet" href="../css/common.css" />
   <link rel="stylesheet" href="../css/default.css" />
+  <link rel="stylesheet" href="../css/park.css" />
   <!-- 导入样式 -->
   <link rel="stylesheet" href="../css/element.css" />
   <!-- 导入 Vue 3 -->
@@ -15,128 +15,69 @@
   <!-- 导入组件库 -->
   <script src="../js/elementUI.js"></script>
   <script src="../js/axios.js"></script>
-  <style>
-    .contents {
-      width: 100vw;
-      margin: 2% auto 0;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
-
-    .block {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 8vh;
-    }
-
-    .itemTitle {
-      margin: 2% 3%;
-      font-size: 20px;
-    }
-
-    .item {
-      margin-top: 8%;
-    }
-    /* 
-    
-    
-    */
-    .changeCard{
-      position: relative;
-      width: 92vw;
-      height: 5vh;
-      margin: 0 auto;
-      background-color: pink;
-    }
-    .CardImge{
-      width: 92vw;
-    }
-    .changeFather{
-      position: absolute;
-      top: 0;
-      width: 92vw;
-      height: 5vh;
-      display: flex;
-    }
-    .itemTitle {
-        width: 100%;
-        height: 65px;
-        align-items: center;
-        font-size: 20px;
-        color: white;
-        font-weight: 600;
-      }
-    /*  */
-    [v-cloak] {
-      display: none;
-    }
-  </style>
 </head>
 
 <body>
   <div id="app" v-cloak>
     <!-- header -->
     <div class="headerBack">
-      <div class="header">
-        <img :src="titleImageUrl" style="width: 100%" />
-      </div>
-      <div class="back clickEffict" @click="back">
-        <img src="../asset/back.png" style="width:80%">
-      </div>
+      <img :src="titleImageUrl" style="width: 100%;">
     </div>
-    <!-- 展示区 -->
+    <!-- 画册区 -->
     <div class="contents">
-      <!-- 选项卡 -->
-      <div class="changeCard">
-          <div class="CardImge">
-            <img src="../img/1.png" style="width: 33%;">
-            <img src="../img/2.png" style="width: 33%;">
-            <img src="../img/3.png" style="width: 33%;">
-          </div>
-          <div class="changeFather">
-            <div class="itemTitle" v-for="(item, index) in schoolList" :key="index">
-              <div style=" text-align: center;" ref="ImgWord" @click="filter(item.schoolId, index)">{{item.schoolName}}
-              </div>
-            </div>
-          </div>
+      <div style=" width: 1280px;">
+        <img src="../img/1.png" style="width: 33%;">
+        <img src="../img/2.png" style="width: 33%;">
+        <img src="../img/3.png" style="width: 33%;">
       </div>
-      <div class="item" v-for="(item,index,id) in media" :key="id">
-        <!-- <div class="itemTitle" :title="item.title">{{item.title}}</div> -->
-        <div class="videoFather">
-          <a :href="item.url" target="_blank"><img style="width: 90%" :src="item.url"
-              v-if="item.type === 'image' " /></a>
+      <div class="TitleFather">
+        <div class="itemTitle" v-for="(item, index) in schoolList" :key="index">
+          <div style=" text-align: center;" ref="ImgWord" @click="test(item.schoolId, index)">{{item.schoolName}}</div>
         </div>
-        <div class="videoFather">
-          <video class="videoSize" v-if="item.type === 'video' " :src="item.url" controls></video>
+      </div>
+      <div class="itemCount" v-for="(item,index,id) in media" :key="id">
+        <div class="itemTitle" :title="item.title">{{item.title}}</div>
+        <a :href="item.url" target="_blank"><img style="width: 300px;height: 170px;overflow: hidden;" :src="item.url"
+            v-if="item.type === 'image' " /></a>
+        <div v-if="item.type === 'video' ">
+          <a :href="item.url" target="_blank">
+            <div class="iconfont">
+              <svg t="1643185229733" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                p-id="2212" width="64" height="64">
+                <path
+                  d="M128 138.666667c0-47.232 33.322667-66.666667 74.176-43.562667l663.146667 374.954667c40.96 23.168 40.853333 60.8 0 83.882666L202.176 928.896C161.216 952.064 128 932.565333 128 885.333333v-746.666666z"
+                  fill="#3D3D3D" p-id="2213"></path>
+              </svg>
+            </div>
+            <video :src="item.url" style="width: 100%;" @click="test" class="videoFather">
+            </video>
+          </a>
         </div>
         <!-- 点赞 -->
         <div class="agree">
-          <div>
-            <img :id="item.id" style="width: 20px; height: 20px; cursor: pointer" @click="zan($event)"
-              :src="item.clickSrc" />
-          </div>
-          <div style="margin-left: 5px;" :id="item.clickId">{{item.likeNum}}</div>
+          <img :id="item.id" style="width: 20px; height: 20px; cursor: pointer;" @click="zan($event)"
+            :src="item.clickSrc" />
+          &nbsp;
+          <div :id="item.clickId">{{item.likeNum}}</div>
         </div>
       </div>
     </div>
-    <!-- <div class="block">
+    <div class="block">
       <el-pagination layout="prev, pager, next" :total="totalCount" @current-change="handleCurrentChange"
         :page-count="mediaTotalPage">
       </el-pagination>
-    </div> -->
+    </div>
   </div>
   <script type="module">
     import { baseUrl, ifJumpTo, maxClickTimesInOneDay, maxClickTimesMsg } from "../js/config.js";
-    let lang = sessionStorage.getItem("lang"); 
+    let lang = sessionStorage.getItem("lang");
     if (lang == null || lang == "null") {
       lang = "zh";
     }
     const App = {
       data() {
         return {
-          media: "",
+          media: [],
           currentPage: 1,
           pageSize: 1000,
           totalCount: 1,
@@ -144,43 +85,29 @@
           subTitle: "",
           titleImageUrl: "",
           mediaTotalPage: 0,
-          schoolList: [
-            {
-              schoolId: 1,
-              schoolName: "小学组"
-            },
-            {
-              schoolId: 2,
-              schoolName: "中学组"
-            },
-            {
-              schoolId: 3,
-              schoolName: "大学组"
-            }
-          ]
+          schoolList: []
         };
       },
+
       created() {
         this.getData(1);
+        this.getData1()
         ifJumpTo(window.location.pathname + window.location.search);
       },
       methods: {
-        getData(grade) {
+        getData(schoolId) {
           let url =
             baseUrl +
-            "activity.php?action=getDrawContent&pageSize=" +
+            "activity.php?action=getVideoContent&pageSize=" +
             this.pageSize +
             "&currentPage=" +
-            this.currentPage + "&grade="+grade;
+            this.currentPage + "&schoolId=" + schoolId;
           axios.get(url).then((res) => {
-            if (lang == null || lang == "null") {
-              lang = "zh";
-            }
             this.totalCount = res.data.mediaTotalCount;
             document.title = res.data[lang].title;
             this.mainTitle = res.data[lang].mainTitle;
             this.subTitle = res.data[lang].subTitle;
-            this.titleImageUrl = res.data.mobile.titleImageUrl;
+            this.titleImageUrl = res.data.pc.titleImageUrl;
             this.mediaTotalPage = res.data.mediaTotalPage;
             let media = res.data.media;
             let now = new Date();
@@ -205,14 +132,29 @@
             this.media = media;
           });
         },
-        back() {
-          window.history.back();
-        },
         handleCurrentChange(val) {
           this.currentPage = val;
           document.body.scrollTop = 0;
           document.documentElement.scrollTop = 0;
-          this.getData(1);
+          this.getData(this.pageSize, val);
+        },
+        getData1() {
+          let url = "http://2022.scxhlz.com/api/activity.php?action=getSchools"
+          axios.get(url).then((res) => {
+            this.schoolList = res.data.data;
+          })
+
+        },
+        test(schoolId, index) {
+          this.getData(schoolId)
+          const ImgWord = this.$refs.ImgWord
+          for (let i = 0; i < ImgWord.length; i++) {
+             ImgWord[i].style.color = "grey"
+             ImgWord[i].style.fontSize = "20px"
+            
+          }
+          ImgWord[index].style.color =' white';
+          ImgWord[index].style.fontSize ='24px';
         },
         zan(e) {
           let now = new Date();
@@ -241,6 +183,7 @@
           axios.post(url, data).then((res) => {
             document.querySelector("#click_" + e.srcElement.id).innerHTML =
               res.data.likeNum;
+
             let media = this.media;
             for (let i = 0; i < media.length; i++) {
               let clickedTimesToday = localStorage.getItem("media_" + media[i].id + "_" + today);
@@ -259,17 +202,10 @@
             this.media = media;
           });
           e.srcElement.src = "../img/zanClicked.svg";
-        },
-        filter(grade, index) {
-          this.getData(grade)
-          const ImgWord = this.$refs.ImgWord
-          for (let i = 0; i < ImgWord.length; i++) {
-            ImgWord[i].style.color = "white"
-          }
-          ImgWord[index].style.color = 'grey';
         }
       },
     };
+
     const app = Vue.createApp(App);
     app.use(ElementPlus);
     app.mount("#app");

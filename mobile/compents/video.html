@@ -31,43 +31,41 @@
       height: 8vh;
     }
 
-    .itemTitle {
-      margin: 2% 3%;
-      font-size: 20px;
-    }
-
     .item {
       margin-top: 8%;
     }
-    /* 
+
+    .tiger {
+      width: 55vw;
+      position: absolute;
+      top: 39px;
+      left: 43%;
+    }
+      /* 
     
     
     */
-    .changeCard{
-      position: relative;
-      width: 92vw;
-      height: 5vh;
-      margin: 0 auto;
-      background-color: pink;
-    }
-    .CardImge{
-      width: 92vw;
-    }
-    .changeFather{
-      position: absolute;
-      top: 0;
-      width: 92vw;
-      height: 5vh;
-      display: flex;
-    }
-    .itemTitle {
+    .changeCard {
+        width: 100vw;
+        height: 5vh;
+        margin: 0 auto;
+        display: flex;
+      }
+
+      .changeFather {
+        position: absolute;
+        top: 0;
+        width: 100vw;
+        height: 5vh;
+        display: flex;
+      }
+
+      .itemTitle {
         width: 100%;
         height: 65px;
-        align-items: center;
-        font-size: 20px;
-        color: white;
-        font-weight: 600;
       }
+
+
     /*  */
     [v-cloak] {
       display: none;
@@ -88,20 +86,22 @@
     </div>
     <!-- 展示区 -->
     <div class="contents">
-      <!-- 选项卡 -->
-      <div class="changeCard">
-          <div class="CardImge">
-            <img src="../img/1.png" style="width: 33%;">
-            <img src="../img/2.png" style="width: 33%;">
-            <img src="../img/3.png" style="width: 33%;">
-          </div>
-          <div class="changeFather">
-            <div class="itemTitle" v-for="(item, index) in schoolList" :key="index">
-              <div style=" text-align: center;" ref="ImgWord" @click="filter(item.schoolId, index)">{{item.schoolName}}
-              </div>
+          <!-- 选项卡 -->
+          <div class="changeCard">
+            <div
+              class="itemTitle"
+              v-for="(item, index) in schoolList"
+              :key="index"
+            >
+              <img
+                ref="ImgWord"
+                style="width: 100%"
+                :src="item.schoolName"
+                @click="test(item.schoolId,item.schoolNameAlive,index)"
+              />
             </div>
           </div>
-      </div>
+          <!--  -->
       <div class="item" v-for="(item,index,id) in media" :key="id">
         <!-- <div class="itemTitle" :title="item.title">{{item.title}}</div> -->
         <div class="videoFather">
@@ -145,33 +145,37 @@
           titleImageUrl: "",
           mediaTotalPage: 0,
           schoolList: [
-            {
-              schoolId: 1,
-              schoolName: "小学组"
-            },
-            {
-              schoolId: 2,
-              schoolName: "中学组"
-            },
-            {
-              schoolId: 3,
-              schoolName: "大学组"
-            }
-          ]
+              {
+                schoolName: "../img/a2.png",
+                schoolNameAlive: "../img/a1.png",
+                schoolId: 1,
+              },
+              {
+                schoolName: "../img/b2.png",
+                schoolNameAlive: "../img/b1.png",
+                schoolId: 2,
+              },
+              {
+                schoolName: "../img/c2.png",
+                schoolNameAlive: "../img/c1.png",
+                schoolId: 3,
+              },
+            ],
         };
       },
       created() {
         this.getData(1);
+        // this.getData1()
         ifJumpTo(window.location.pathname + window.location.search);
       },
       methods: {
-        getData(grade) {
+        getData(schoolId) {
           let url =
             baseUrl +
-            "activity.php?action=getDrawContent&pageSize=" +
+            "activity.php?action=getVideoContent&pageSize=" +
             this.pageSize +
             "&currentPage=" +
-            this.currentPage + "&grade="+grade;
+            +this.currentPage+"&schoolId="+schoolId;
           axios.get(url).then((res) => {
             if (lang == null || lang == "null") {
               lang = "zh";
@@ -211,8 +215,27 @@
         handleCurrentChange(val) {
           this.currentPage = val;
           document.body.scrollTop = 0;
-          document.documentElement.scrollTop = 0;
-          this.getData(1);
+          document.documentElement.scrollTop = 0
+          this.getData(this.pageSize, val);
+        },
+        getData1() {
+          let url = "http://2022.scxhlz.com/api/activity.php?action=getSchools"
+          axios.get(url).then((res) => {
+            this.schoolList = res.data.data;
+          })
+
+        },
+        test(schoolId, index) {
+          this.getData(schoolId)
+          const ImgWord = this.$refs.ImgWord
+          for (let i = 0; i < ImgWord.length; i++) {
+            ImgWord[i].style.color = "white"
+
+          }
+          ImgWord[index].style.color = 'grey';
+        },
+        Imge1(){
+          
         },
         zan(e) {
           let now = new Date();
@@ -260,14 +283,16 @@
           });
           e.srcElement.src = "../img/zanClicked.svg";
         },
-        filter(grade, index) {
-          this.getData(grade)
-          const ImgWord = this.$refs.ImgWord
-          for (let i = 0; i < ImgWord.length; i++) {
-            ImgWord[i].style.color = "white"
-          }
-          ImgWord[index].style.color = 'grey';
-        }
+        test(schoolId, schoolNameAlive,index) {
+            this.getData(schoolId);
+            const ImgWord = this.$refs.ImgWord;
+            for (let i = 0; i < this.schoolList.length; i++) {
+              for (let i = 0; i < ImgWord.length; i++) {
+                ImgWord[i].src = this.schoolList[i].schoolName;
+              }
+            }
+            ImgWord[index].src = schoolNameAlive;
+          },
       },
     };
     const app = Vue.createApp(App);

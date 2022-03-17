@@ -1,96 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
-    <link rel="stylesheet" href="../css/default.css" />
-    <link rel="stylesheet" href="../css/common.css" />
-    <script src="../js/axios.js"></script>
-    <script src="../js/Vue.js"></script>
-    <style>
-      [v-cloak] {
-        display: none;
-      }
-      .content {
-        width: 100vw;
-        margin: 0 auto;
-      }
-      .text{
-        width: 90vw;
-        margin: 0 auto;
-        font-size: 20px;
-      }
 
-    </style>
-  </head>
-  <body>
-    <div id="app" v-cloak>
-        <!-- header -->
-        <div class="headerBack">
-          <div class="header">
-              <img :src="titleImageUrl" style="width: 100%"/>
-          </div>
-          <div class="back clickEffict" @click="back">
-            <svg t="1643341012348" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2048" width="32" height="32"><path d="M710.153924 8.980397L266.007127 460.692524a81.118646 81.118646 0 0 0 0.861532 114.476097l446.192936 441.050666a26.922883 26.922883 0 0 0 37.853573-38.284339L304.722232 536.884282a27.27288 27.27288 0 0 1-0.323074-38.445877L748.545955 46.726278A26.922883 26.922883 0 1 0 710.180847 9.00732z" p-id="2049" fill="#1296db"></path></svg>
-          </div>
-        </div>
-      <!-- 公告 -->
-      <div class="content">
-          <div class="text" v-html="mainContent"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <link rel="stylesheet" href="../css/default.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <script src="../js/axios.js"></script>
+  <script src="../js/Vue.js"></script>
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+
+    .content {
+      width: 100vw;
+      margin: 0 auto;
+    }
+
+    .text {
+      width: 90vw;
+      margin: 0 auto;
+      font-size: 18.56px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app" v-cloak>
+    <!-- header -->
+    <div class="headerBack">
+      <div class="header">
+        <img :src="titleImageUrl" style="width: 100%" />
+      </div>
+      <div class="back clickEffict" @click="back">
+        <img src="../asset/back.png" style="width:80%">
       </div>
     </div>
-    <script type="module">
-      import  {baseUrl, ifJumpTo} from "../js/config.js";
-        let lang = sessionStorage.getItem("lang"); if (lang == null) {
-                lang = "zh";
-              }
-      const app = {
-        data() {
-          return {
-            titleImageUrl: "",
-            mainContent: "",
-          };
-        },
-        created() {
-          this.getData();
-          ifJumpTo(window.location.pathname+window.location.search);
+    <!-- 公告 -->
+    <div class="content">
+      <div class="text" v-html="mainContent">
+      </div>
+    </div>
+  </div>
+  <script type="module">
+    import { baseUrl, ifJumpTo } from "../js/config.js";
+    let lang = sessionStorage.getItem("lang"); if (lang == null) {
+      lang = "zh";
+    }
+    const app = {
+      data() {
+        return {
+          titleImageUrl: "",
+          mainContent: "",
+        };
+      },
+      created() {
+        this.getData();
+        ifJumpTo(window.location.pathname + window.location.search);
 
-        },
-        methods: {
-          getData() {
-              let page = this.getQueryVariable("page");
-            axios
-              .get(
-                baseUrl + "activity.php?action=getNoticeContent&page="+page
-              )
-              .then((res) => {
-                if (lang == null) {
+      },
+      methods: {
+        getData() {
+          let page = this.getQueryVariable("page");
+          axios
+            .get(
+              baseUrl + "activity.php?action=getNoticeContent&page=" + page
+            )
+            .then((res) => {
+              if (lang == null || lang == "null") {
                 lang = "zh";
               }
-                document.title = res.data[lang].title;
-                this.titleImageUrl = res.data.mobile.titleImageUrl;
-                this.mainContent = res.data.mainContent;
-              });
-          },
-          back() {
-            window.history.back();
-          },
-          getQueryVariable(variable) {
-            var query = window.location.search.substring(1);
-            var vars = query.split("&");
-            for (var i = 0; i < vars.length; i++) {
-              var pair = vars[i].split("=");
-              if (pair[0] == variable) {
-                return pair[1];
-              }
-            }
-            return false;
-          },
+              document.title = res.data[lang].title;
+              this.titleImageUrl = res.data.mobile.titleImageUrl;
+              this.mainContent = res.data.mainContent;
+            });
         },
-      };
-      Vue.createApp(app).mount("#app");
-    </script>
-  </body>
+        back() {
+          window.history.back();
+        },
+        getQueryVariable(variable) {
+          var query = window.location.search.substring(1);
+          var vars = query.split("&");
+          for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == variable) {
+              return pair[1];
+            }
+          }
+          return false;
+        },
+      },
+    };
+    Vue.createApp(app).mount("#app");
+  </script>
+</body>
+
 </html>
